@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:56571",
+      "applicationUrl": "http://localhost:33001",
       "sslPort": 0
     }
   },
@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "MetricsAgent": {
+    "MetricsManager": {
       "commandName": "Project",
       "launchBrowser": false,
       "launchUrl": "weatherforecast",

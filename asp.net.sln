@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetricsManager", "asp.net\MetricsManager.csproj", "{18EAADFD-AAC6-40E4-959B-FFC00E3D4E3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetricsManager", "MetricsManager\MetricsManager.csproj", "{E9035FD6-69A0-45F7-89C1-EF60724E3BA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetricsAgent", "MetricsAgent\MetricsAgent.csproj", "{2ABCD8A2-D54A-45DB-858D-C6867F47FE7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetricsAgent", "MetricsAgent\MetricsAgent.csproj", "{A203BDBB-F9F3-4D14-893E-8A5F2073C521}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMetricsManager", "TestMetricsManager\TestMetricsManager.csproj", "{4527DCB2-8C98-427E-8D5A-E551059A4AEB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetricManagerTest", "MetricManagerTest\MetricManagerTest.csproj", "{3B80610C-CB87-4908-88F7-B8D5B43572DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMetricsAgent", "TestMetricsAgent\TestMetricsAgent.csproj", "{60D9795E-12ED-4E38-A396-EEE05EB93ADE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetricAgentTest", "MetricAgentTest\MetricAgentTest.csproj", "{7A7544CE-9F86-4BE8-944D-EBACE43582F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,22 +17,22 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{18EAADFD-AAC6-40E4-959B-FFC00E3D4E3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18EAADFD-AAC6-40E4-959B-FFC00E3D4E3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18EAADFD-AAC6-40E4-959B-FFC00E3D4E3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18EAADFD-AAC6-40E4-959B-FFC00E3D4E3C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2ABCD8A2-D54A-45DB-858D-C6867F47FE7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2ABCD8A2-D54A-45DB-858D-C6867F47FE7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2ABCD8A2-D54A-45DB-858D-C6867F47FE7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2ABCD8A2-D54A-45DB-858D-C6867F47FE7E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4527DCB2-8C98-427E-8D5A-E551059A4AEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4527DCB2-8C98-427E-8D5A-E551059A4AEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4527DCB2-8C98-427E-8D5A-E551059A4AEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4527DCB2-8C98-427E-8D5A-E551059A4AEB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{60D9795E-12ED-4E38-A396-EEE05EB93ADE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{60D9795E-12ED-4E38-A396-EEE05EB93ADE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{60D9795E-12ED-4E38-A396-EEE05EB93ADE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{60D9795E-12ED-4E38-A396-EEE05EB93ADE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9035FD6-69A0-45F7-89C1-EF60724E3BA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9035FD6-69A0-45F7-89C1-EF60724E3BA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9035FD6-69A0-45F7-89C1-EF60724E3BA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9035FD6-69A0-45F7-89C1-EF60724E3BA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A203BDBB-F9F3-4D14-893E-8A5F2073C521}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A203BDBB-F9F3-4D14-893E-8A5F2073C521}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A203BDBB-F9F3-4D14-893E-8A5F2073C521}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A203BDBB-F9F3-4D14-893E-8A5F2073C521}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B80610C-CB87-4908-88F7-B8D5B43572DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B80610C-CB87-4908-88F7-B8D5B43572DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B80610C-CB87-4908-88F7-B8D5B43572DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B80610C-CB87-4908-88F7-B8D5B43572DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A7544CE-9F86-4BE8-944D-EBACE43582F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A7544CE-9F86-4BE8-944D-EBACE43582F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A7544CE-9F86-4BE8-944D-EBACE43582F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A7544CE-9F86-4BE8-944D-EBACE43582F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
