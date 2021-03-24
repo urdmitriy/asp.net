@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace asp.net
+namespace MetricsAgent
 {
     public class Startup
     {
@@ -23,7 +23,6 @@ namespace asp.net
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
