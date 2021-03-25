@@ -34,7 +34,6 @@ namespace MetricManagerTest
         public void GetMetricsFromAgentByPercentille_ReturnsOk()
         {
             //Arrange
-            var agentId = 1;
             var fromTime = TimeSpan.FromSeconds(0);
             var toTime = TimeSpan.FromSeconds(100);
             Percentile percentile = Percentile.P99;
