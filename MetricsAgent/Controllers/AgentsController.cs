@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,28 +12,40 @@ namespace MetricsAgent.Controllers
     [ApiController]
     public class AgentsController : ControllerBase
     {
+        private readonly ILogger<AgentsController> _logger;
+
+        public AgentsController(ILogger<AgentsController> logger)
+        {
+            _logger = logger;
+            _logger.LogDebug(1, "NLog встроен в AgentsController");
+        }
+
         [HttpGet("registered")]
         public IActionResult GetRegisteredObjects()
         {
-            return Ok("GetRegisteredObjects");
+            _logger.LogInformation("Запрос зарегистрированных объектов");
+            return Ok("");
         }
 
         [HttpPost("register")]
         public IActionResult RegisterAgent([FromBody] AgentInfo agentInfo)
         {
-            return Ok("RegisterAgent");
+            _logger.LogInformation("Регистриция агента");
+            return Ok("");
         }
 
         [HttpPut("enable/{agentId}")]
         public IActionResult EnableAgentById([FromRoute] int agentId)
         {
-            return Ok("EnableAgentById");
+            _logger.LogInformation($"Запрос активации агента {agentId}");
+            return Ok("");
         }
 
         [HttpPut("disable/{agentId}")]
         public IActionResult DisableAgentById([FromRoute] int agentId)
         {
-            return Ok("DisableAgentById");
+            _logger.LogInformation($"Запрос деактивации агента {agentId}");
+            return Ok("");
         }
     }
 }
