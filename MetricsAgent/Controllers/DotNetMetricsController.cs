@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MetricsManager.Controllers
+namespace MetricsAgent.Controllers
 {
     [Route("api/metrics/dotnet/errors-count")]
     [ApiController]
@@ -19,22 +19,22 @@ namespace MetricsManager.Controllers
             _logger.LogDebug(1, "NLog встроен в DotNetMetricsController");
         }
 
-        [HttpGet("agentId/{agentid}/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        [HttpGet("from/{fromTime}/to/{toTime}")]
+        public IActionResult GetMetricsFromAgent([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
             _logger.LogInformation($"Запрос метрики DotNet с {fromTime} по {toTime}");
             return Ok("");
         }
 
-        [HttpGet("agentId/{agentid}/cluster/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAllCluster([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
+        public IActionResult GetMetricsFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
             _logger.LogInformation($"Запрос метрики DotNet кластеров с {fromTime} по {toTime}");
             return Ok();
         }
 
-        [HttpGet("agentId/{agentid}/cluster/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
-        public IActionResult GetMetricsByPercentileFromAllCluster([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
+        [HttpGet("cluster/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
+        public IActionResult GetMetricsByPercentileFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
         {
             _logger.LogInformation($"Запрос метрики DotNet кластеров с {fromTime} по {toTime}, персентиле {percentile}");
             return Ok();

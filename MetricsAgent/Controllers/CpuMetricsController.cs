@@ -1,50 +1,51 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MetricsAgent.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/metrics/cpu")]
     [ApiController]
     public class CpuMetricsController : ControllerBase
     {
-        private ICpuMetricsRepository repository;
-        public CpuMetricsController(ICpuMetricsRepository repository)
+        private readonly ILogger<CpuMetricsController> _logger;
+        public CpuMetricsController(ILogger<CpuMetricsController> logger)
         {
-            this.repository = repository;
+            _logger = logger;
+            _logger.LogDebug(1, "NLog встроен в CpuMetricsController");
         }
 
-        [HttpPost("create")]
-        public IActionResult Create([FromBody] CpuMetricCreateRequest request)
+        [HttpGet("from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
+        public IActionResult GetMetricsFromAgentByPercentille([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
         {
-            repository.Create(new CpuMetric
-            {
-                Time = request.Time,
-                Value = request.Value
+            _logger.LogInformation($"Запрос метрики CPU с {fromTime} по {toTime}, перцентиле {percentile}");
+            return Ok("");
+        }
 
-            });
+        [HttpGet("from/{fromTime}/to/{toTime}")]
+        public IActionResult GetMetricsFromAgent([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        {
+            _logger.LogInformation($"Запрос метрики CPU с {fromTime} по {toTime}");
+            return Ok("");
+        }
+
+        [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
+        public IActionResult GetMetricsFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        {
+            _logger.LogInformation($"Запрос метрики CPU кластеров с {fromTime} по {toTime}");
             return Ok();
         }
-        [HttpGet("all")]
-        public IActionResult GetAll()
+
+        [HttpGet("cluster/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
+        public IActionResult GetMetricsByPercentileFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
         {
-            var metrics = repository.GetAll();
-
-            var response = new AllCpuMetricsResponse()
-            {
-                Metrics = new List<CpuMetricDto>()
-            };
-
-            foreach (var metric in metrics)
-            {
-                response.Metrics.Add(new CpuMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
-            }
-
-            return Ok(response);
+            _logger.LogInformation($"Запрос метрики CPU кластерок с {fromTime} по {toTime}, перцентиле {percentile}");
+            return Ok();
         }
-
     }
 }
