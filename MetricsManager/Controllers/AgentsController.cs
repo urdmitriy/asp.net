@@ -14,25 +14,25 @@ namespace MetricsManager.Controllers
         [HttpGet("registered")]
         public IActionResult GetRegisteredObjects()
         {
-            return Ok("GetRegisteredObjects");
+            return Ok();
         }
 
         [HttpPost("register")]
         public IActionResult RegisterAgent([FromBody] AgentInfo agentInfo)
         {
-            return Ok("RegisterAgent");
+            return Ok();
         }
 
         [HttpPut("enable/{agentId}")]
         public IActionResult EnableAgentById([FromRoute] int agentId)
         {
-            return Ok("EnableAgentById");
+            return Ok();
         }
 
         [HttpPut("disable/{agentId}")]
         public IActionResult DisableAgentById([FromRoute] int agentId)
         {
-            return Ok("DisableAgentById");
+            return Ok();
         }
     }
 }

@@ -14,7 +14,19 @@ namespace MetricsAgent.Controllers
         [HttpGet("available")]
         public IActionResult GetMetricsFromAgent()
         {
-            return Ok("GetMetricsRam");
+            return Ok();
+        }
+
+        [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
+        public IActionResult GetMetricsFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        {
+            return Ok();
+        }
+
+        [HttpGet("cluster/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
+        public IActionResult GetMetricsByPercentileFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
+        {
+            return Ok();
         }
     }
 }
