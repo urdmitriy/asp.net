@@ -24,19 +24,5 @@ namespace MetricsAgent.Controllers
             _logger.LogInformation($"Запрос метрики Memory");
             return Ok("");
         }
-
-        [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
-        {
-            _logger.LogInformation($"Запрос метрики Memory кластеров");
-            return Ok();
-        }
-
-        [HttpGet("cluster/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
-        public IActionResult GetMetricsByPercentileFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
-        {
-            _logger.LogInformation($"Запрос метрики Memory кластеров, перцентиле {percentile}");
-            return Ok();
-        }
     }
 }

@@ -33,19 +33,5 @@ namespace MetricsAgent.Controllers
             _logger.LogInformation($"Запрос метрики CPU с {fromTime} по {toTime}");
             return Ok("");
         }
-
-        [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
-        {
-            _logger.LogInformation($"Запрос метрики CPU кластеров с {fromTime} по {toTime}");
-            return Ok();
-        }
-
-        [HttpGet("cluster/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
-        public IActionResult GetMetricsByPercentileFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
-        {
-            _logger.LogInformation($"Запрос метрики CPU кластерок с {fromTime} по {toTime}, перцентиле {percentile}");
-            return Ok();
-        }
     }
 }
