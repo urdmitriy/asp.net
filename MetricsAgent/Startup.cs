@@ -40,6 +40,12 @@ namespace MetricsAgent
             connection.Open();
             PrepareSchema(connection);
             services.AddSingleton(connection);
+
+            FillingTestData(connection, "cpumetrics");
+            FillingTestData(connection, "dotnetmetrics");
+            FillingTestData(connection, "hddmetrics");
+            FillingTestData(connection, "networkmetrics");
+            FillingTestData(connection, "rammetrics");
         }
 
         private void PrepareSchema(SQLiteConnection connection)
@@ -57,7 +63,6 @@ namespace MetricsAgent
                 command.CommandText = "DROP TABLE IF EXISTS rammetrics";
                 command.ExecuteNonQuery();
 
-
                 command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER PRIMARY KEY, value INT, time INT)";
                 command.ExecuteNonQuery();
                 command.CommandText = @"CREATE TABLE dotnetmetrics(id INTEGER PRIMARY KEY, value INT, time INT)";
@@ -69,9 +74,27 @@ namespace MetricsAgent
                 command.CommandText = @"CREATE TABLE rammetrics(id INTEGER PRIMARY KEY, value INT, time INT)";
                 command.ExecuteNonQuery();
             }
+
         }
+
+        public void FillingTestData(SQLiteConnection connection, string dbase)
+        {
+            var rnd = new Random();
+            using (var command = new SQLiteCommand(connection))
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    command.CommandText = $"INSERT INTO {dbase} (value, time) VALUES(@value, @time)";
+                    command.Parameters.AddWithValue("@value", rnd.Next(100));
+                    command.Parameters.AddWithValue("@time", rnd.Next(86400));
+                    command.Prepare();
+                    command.ExecuteNonQuery();
+                }
+            }  
+        }
+
             // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-            public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
