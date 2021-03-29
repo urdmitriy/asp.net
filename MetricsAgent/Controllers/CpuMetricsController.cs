@@ -14,11 +14,18 @@ namespace MetricsAgent.Controllers
     public class CpuMetricsController : ControllerBase
     {
         private readonly ILogger<CpuMetricsController> _logger;
+        private ICpuMetricsRepository repository;
+
         public CpuMetricsController(ILogger<CpuMetricsController> logger)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в CpuMetricsController");
         }
+        public CpuMetricsController(ICpuMetricsRepository repository)
+        {
+            this.repository = repository;
+        }
+
 
         [HttpGet("from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
         public IActionResult GetMetricsFromAgentByPercentille([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)

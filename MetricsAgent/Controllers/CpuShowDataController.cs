@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+/*
+ *   Контроллер для тестов  
+ */
+
 namespace MetricsAgent.Controllers
 {
     [Route("api/[controller]")]

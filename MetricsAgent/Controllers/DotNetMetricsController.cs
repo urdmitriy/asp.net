@@ -13,10 +13,16 @@ namespace MetricsAgent.Controllers
     public class DotNetMetricsController : ControllerBase
     {
         private readonly ILogger<DotNetMetricsController> _logger;
+        private IDotNetMetricsRepository repository;
+
         public DotNetMetricsController(ILogger<DotNetMetricsController> logger)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в DotNetMetricsController");
+        }
+        public DotNetMetricsController(IDotNetMetricsRepository repository)
+        {
+            this.repository = repository;
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]

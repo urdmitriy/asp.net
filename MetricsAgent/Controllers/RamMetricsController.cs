@@ -13,11 +13,17 @@ namespace MetricsAgent.Controllers
     public class RamMetricsController : ControllerBase
     {
         private readonly ILogger<RamMetricsController> _logger;
+        private IRamMetricsRepository repository;
         public RamMetricsController(ILogger<RamMetricsController> logger)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в RamMetricsController");
         }
+        public RamMetricsController(IRamMetricsRepository repository)
+        {
+            this.repository = repository;
+        }
+
         [HttpGet("available")]
         public IActionResult GetMetricsFromAgent()
         {

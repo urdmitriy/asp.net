@@ -13,10 +13,15 @@ namespace MetricsAgent.Controllers
     public class NetworkMetricsController : ControllerBase
     {
         private readonly ILogger<NetworkMetricsController> _logger;
+        private INetworkMetricsRepository repository;
         public NetworkMetricsController(ILogger<NetworkMetricsController> logger)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в NetworkMetricsController");
+        }
+        public NetworkMetricsController(INetworkMetricsRepository repository)
+        {
+            this.repository = repository;
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
