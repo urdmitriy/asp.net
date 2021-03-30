@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace MetricsAgent
 {
-    public class AllCpuMetricsResponse
+    public class AllRamMetricsResponse
     {
-        public List<CpuMetricDto> Metrics { get; set; }
+        public List<RamMetricsDto> Metrics { get; set; }
     }
 }
