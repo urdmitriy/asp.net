@@ -13,22 +13,31 @@ namespace MetricsAgent.Controllers
     public class RamMetricsController : ControllerBase
     {
         private readonly ILogger<RamMetricsController> _logger;
-        private IRamMetricsRepository repository;
-        public RamMetricsController(ILogger<RamMetricsController> logger)
+        private IRamMetricsRepository _repository;
+        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в RamMetricsController");
-        }
-        public RamMetricsController(IRamMetricsRepository repository)
-        {
-            this.repository = repository;
+            _repository = repository;
         }
 
         [HttpGet("available")]
         public IActionResult GetMetricsFromAgent()
         {
             _logger.LogInformation($"Запрос метрики Memory");
-            return Ok("");
+
+            var metrics = _repository.GetAll();
+            var response = new AllRamMetricsResponse()
+            {
+                Metrics = new List<RamMetricsDto>()
+            };
+
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add(new RamMetricsDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+            }
+
+            return Ok(response);
         }
     }
 }

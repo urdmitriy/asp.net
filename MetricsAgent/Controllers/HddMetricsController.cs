@@ -13,22 +13,31 @@ namespace MetricsAgent.Controllers
     public class HddMetricsController : ControllerBase
     {
         private readonly ILogger<HddMetricsController> _logger;
-        private IHddMetricsRepository repository;
-        public HddMetricsController(ILogger<HddMetricsController> logger)
+        private IHddMetricsRepository _repository;
+        public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository repository)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в HddMetricsController");
-        }
-        public HddMetricsController(IHddMetricsRepository repository)
-        {
-            this.repository = repository;
+            _repository = repository;
         }
 
         [HttpGet("left")]
         public IActionResult GetMetricsFromAgent()
         {
             _logger.LogInformation($"Запрос метрики HDD");
-            return Ok("");
+
+            var metrics = _repository.GetAll();
+            var response = new AllHddMetricsResponse()
+            {
+                Metrics = new List<HddMetricDto>()
+            };
+
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add(new HddMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+            }
+
+            return Ok(response);
         }
     }
 }

@@ -13,23 +13,34 @@ namespace MetricsAgent.Controllers
     public class DotNetMetricsController : ControllerBase
     {
         private readonly ILogger<DotNetMetricsController> _logger;
-        private IDotNetMetricsRepository repository;
+        private IDotNetMetricsRepository _repository;
 
-        public DotNetMetricsController(ILogger<DotNetMetricsController> logger)
+        public DotNetMetricsController(ILogger<DotNetMetricsController> logger, IDotNetMetricsRepository repository)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в DotNetMetricsController");
-        }
-        public DotNetMetricsController(IDotNetMetricsRepository repository)
-        {
-            this.repository = repository;
+            _repository = repository;
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsFromAgent([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
             _logger.LogInformation($"Запрос метрики DotNet с {fromTime} по {toTime}");
-            return Ok("");
+
+            var metrics = _repository.GetAll();
+            var response = new AllDotNetMetricsResponse()
+            {
+                Metrics = new List<DotNetMetricDto>()
+            };
+
+            foreach (var metric in metrics)
+            {
+                if (metric.Time > fromTime && metric.Time < toTime)
+                {
+                    response.Metrics.Add(new DotNetMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                }
+            }
+            return Ok(response);
         }
     }
 }
