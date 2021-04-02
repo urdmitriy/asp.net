@@ -1,5 +1,6 @@
 using MetricsAgent;
 using MetricsAgent.Controllers;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using Xunit;
@@ -8,21 +9,23 @@ namespace MetricsAgentTests
 {
     public class HddMetricsControllerUnitTests
     {
-        private HddMetricsController controller;
-        private Mock<IHddMetricsRepository> mock;
+        private HddMetricsController _controller;
+        private Mock<IHddMetricsRepository> _mock;
+        private Mock<ILogger<HddMetricsController>> _logger;
         public HddMetricsControllerUnitTests()
         {
-            mock = new Mock<IHddMetricsRepository>();
-            controller = new HddMetricsController(mock.Object);
+            _mock = new Mock<IHddMetricsRepository>();
+            _logger = new Mock<ILogger<HddMetricsController>>();
+            _controller = new HddMetricsController(_logger.Object, _mock.Object);
         }
 
         [Fact]
         public void Create_ShouldCall_Create_From_Repository()
         {
-            mock.Setup(repository =>
+            _mock.Setup(repository =>
             repository.Create(It.IsAny<HddMetric>())).Verifiable();
 
-            mock.Verify(repository => repository.Create(It.IsAny<HddMetric>()),
+            _mock.Verify(repository => repository.Create(It.IsAny<HddMetric>()),
             Times.AtMostOnce());
         }
     }
