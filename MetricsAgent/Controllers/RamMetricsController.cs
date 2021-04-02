@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,22 +12,32 @@ namespace MetricsAgent.Controllers
     [ApiController]
     public class RamMetricsController : ControllerBase
     {
+        private readonly ILogger<RamMetricsController> _logger;
+        private IRamMetricsRepository _repository;
+        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository)
+        {
+            _logger = logger;
+            _logger.LogDebug(1, "NLog встроен в RamMetricsController");
+            _repository = repository;
+        }
+
         [HttpGet("available")]
         public IActionResult GetMetricsFromAgent()
         {
-            return Ok();
-        }
+            _logger.LogInformation($"Запрос метрики Memory");
 
-        [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
-        {
-            return Ok();
-        }
+            var metrics = _repository.GetAll();
+            var response = new AllRamMetricsResponse()
+            {
+                Metrics = new List<RamMetricsDto>()
+            };
 
-        [HttpGet("cluster/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
-        public IActionResult GetMetricsByPercentileFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
-        {
-            return Ok();
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add(new RamMetricsDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+            }
+
+            return Ok(response);
         }
     }
 }

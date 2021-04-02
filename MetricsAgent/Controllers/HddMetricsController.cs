@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,22 +12,32 @@ namespace MetricsAgent.Controllers
     [ApiController]
     public class HddMetricsController : ControllerBase
     {
+        private readonly ILogger<HddMetricsController> _logger;
+        private IHddMetricsRepository _repository;
+        public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository repository)
+        {
+            _logger = logger;
+            _logger.LogDebug(1, "NLog встроен в HddMetricsController");
+            _repository = repository;
+        }
+
         [HttpGet("left")]
         public IActionResult GetMetricsFromAgent()
         {
-            return Ok();
-        }
+            _logger.LogInformation($"Запрос метрики HDD");
 
-        [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
-        {
-            return Ok();
-        }
+            var metrics = _repository.GetAll();
+            var response = new AllHddMetricsResponse()
+            {
+                Metrics = new List<HddMetricDto>()
+            };
 
-        [HttpGet("cluster/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
-        public IActionResult GetMetricsByPercentileFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
-        {
-            return Ok();
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add(new HddMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+            }
+
+            return Ok(response);
         }
     }
 }
