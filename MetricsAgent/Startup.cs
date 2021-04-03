@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using AutoMapper;
 
 namespace MetricsAgent
 {
@@ -32,47 +34,44 @@ namespace MetricsAgent
             services.AddScoped<IHddMetricsRepository, HddMetricsRepository>();
             services.AddScoped<INetworkMetricsRepository, NetworkMetricsRepository>();
             services.AddScoped<IRamMetricsRepository, RamMetricsRepository>();
+
+            var mapperConfiguration = new MapperConfiguration(mp => mp.AddProfile(new MapperProfile()));
+            var mapper = mapperConfiguration.CreateMapper();
+            services.AddSingleton(mapper);
         }
         private void ConfigureSqlLiteConnection(IServiceCollection services)
         {
-            string connectionString = "Data Source=:memory:";
-            var connection = new SQLiteConnection(connectionString);
-            connection.Open();
-            PrepareSchema(connection);
-            services.AddSingleton(connection);
+            string connectionString = @"Data Source = metrics.db; Version = 3; Pooling = True; Max Pool Size = 100;";
+            using (var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+                PrepareSchema(connection);
+                services.AddSingleton(connection);
 
-            FillingTestData(connection, "cpumetrics");
-            FillingTestData(connection, "dotnetmetrics");
-            FillingTestData(connection, "hddmetrics");
-            FillingTestData(connection, "networkmetrics");
-            FillingTestData(connection, "rammetrics");
+                FillingTestData(connection, "cpumetrics");
+                FillingTestData(connection, "dotnetmetrics");
+                FillingTestData(connection, "hddmetrics");
+                FillingTestData(connection, "networkmetrics");
+                FillingTestData(connection, "rammetrics");
+            }
+                
         }
 
         private void PrepareSchema(SQLiteConnection connection)
         {
             using (var command = new SQLiteCommand(connection))
             {
-                command.CommandText = "DROP TABLE IF EXISTS cpumetrics";
-                command.ExecuteNonQuery();
-                command.CommandText = "DROP TABLE IF EXISTS dotnetmetrics";
-                command.ExecuteNonQuery();
-                command.CommandText = "DROP TABLE IF EXISTS hddmetrics";
-                command.ExecuteNonQuery();
-                command.CommandText = "DROP TABLE IF EXISTS networkmetrics";
-                command.ExecuteNonQuery();
-                command.CommandText = "DROP TABLE IF EXISTS rammetrics";
-                command.ExecuteNonQuery();
+                connection.Execute("DROP TABLE IF EXISTS cpumetrics");
+                connection.Execute("DROP TABLE IF EXISTS dotnetmetrics");
+                connection.Execute("DROP TABLE IF EXISTS hddmetrics");
+                connection.Execute("DROP TABLE IF EXISTS networkmetrics");
+                connection.Execute("DROP TABLE IF EXISTS rammetrics");
 
-                command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER PRIMARY KEY, value INT, time INT)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"CREATE TABLE dotnetmetrics(id INTEGER PRIMARY KEY, value INT, time INT)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"CREATE TABLE hddmetrics(id INTEGER PRIMARY KEY, value INT, time INT)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"CREATE TABLE networkmetrics(id INTEGER PRIMARY KEY, value INT, time INT)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"CREATE TABLE rammetrics(id INTEGER PRIMARY KEY, value INT, time INT)";
-                command.ExecuteNonQuery();
+                connection.Execute(@"CREATE TABLE cpumetrics(id INTEGER PRIMARY KEY AUTOINCREMENT, value INT64, time INT64)");
+                connection.Execute(@"CREATE TABLE dotnetmetrics(id INTEGER PRIMARY KEY AUTOINCREMENT, value INT64, time INT64)");
+                connection.Execute(@"CREATE TABLE hddmetrics(id INTEGER PRIMARY KEY AUTOINCREMENT, value INT64, time INT64)");
+                connection.Execute(@"CREATE TABLE networkmetrics(id INTEGER PRIMARY KEY AUTOINCREMENT, value INT64, time INT64)");
+                connection.Execute(@"CREATE TABLE rammetrics(id INTEGER PRIMARY KEY AUTOINCREMENT, value INT64, time INT64)");
             }
 
         }
@@ -80,20 +79,19 @@ namespace MetricsAgent
         public void FillingTestData(SQLiteConnection connection, string dbase)
         {
             var rnd = new Random();
-            using (var command = new SQLiteCommand(connection))
+
+            for (int i = 0; i < 10; i++)
             {
-                for (int i = 0; i < 10; i++)
-                {
-                    command.CommandText = $"INSERT INTO {dbase} (value, time) VALUES(@value, @time)";
-                    command.Parameters.AddWithValue("@value", rnd.Next(100));
-                    command.Parameters.AddWithValue("@time", rnd.Next(86400));
-                    command.Prepare();
-                    command.ExecuteNonQuery();
-                }
-            }  
+                connection.Execute($"INSERT INTO {dbase} (value, time) VALUES(@value, @time)",
+                    new
+                    {
+                        value = rnd.Next(100),
+                        time = rnd.Next(86400)
+                    });
+            }
         }
 
-            // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

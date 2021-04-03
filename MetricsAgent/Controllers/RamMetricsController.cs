@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,11 +15,13 @@ namespace MetricsAgent.Controllers
     {
         private readonly ILogger<RamMetricsController> _logger;
         private IRamMetricsRepository _repository;
-        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository)
+        private readonly IMapper _mapper;
+        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в RamMetricsController");
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet("available")]
@@ -34,7 +37,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new RamMetricsDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(_mapper.Map<RamMetricsDto>(metric));
             }
 
             return Ok(response);

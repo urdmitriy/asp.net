@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,12 +16,14 @@ namespace MetricsAgent.Controllers
     {
         private readonly ILogger<CpuMetricsController> _logger;
         private ICpuMetricsRepository _repository;
+        private readonly IMapper _mapper;
 
-        public CpuMetricsController(ILogger<CpuMetricsController> logger, ICpuMetricsRepository repository)
+        public CpuMetricsController(ILogger<CpuMetricsController> logger, ICpuMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в CpuMetricsController");
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
@@ -37,7 +40,7 @@ namespace MetricsAgent.Controllers
             {
                 if (metric.Time > fromTime && metric.Time < toTime) //с перцентиле не разобрался
                 {
-                    response.Metrics.Add(new CpuMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                    response.Metrics.Add(_mapper.Map<CpuMetricDto>(metric));
                 }
             }
             return Ok(response);
@@ -58,7 +61,7 @@ namespace MetricsAgent.Controllers
             {
                 if (metric.Time>fromTime && metric.Time < toTime)
                 {
-                    response.Metrics.Add(new CpuMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                    response.Metrics.Add(_mapper.Map<CpuMetricDto>(metric));
                 }
             }
             return Ok(response);

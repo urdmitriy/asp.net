@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,11 +15,13 @@ namespace MetricsAgent.Controllers
     {
         private readonly ILogger<NetworkMetricsController> _logger;
         private INetworkMetricsRepository _repository;
-        public NetworkMetricsController(ILogger<NetworkMetricsController> logger, INetworkMetricsRepository repository)
+        private readonly IMapper _mapper;
+        public NetworkMetricsController(ILogger<NetworkMetricsController> logger, INetworkMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в NetworkMetricsController");
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
@@ -36,7 +39,7 @@ namespace MetricsAgent.Controllers
             {
                 if (metric.Time > fromTime && metric.Time < toTime)
                 {
-                    response.Metrics.Add(new NetworkMetricsDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                    response.Metrics.Add(_mapper.Map<NetworkMetricsDto>(metric));
                 }
             }
             return Ok(response);
