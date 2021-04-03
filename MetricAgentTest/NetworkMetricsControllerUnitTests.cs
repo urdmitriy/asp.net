@@ -1,3 +1,4 @@
+using AutoMapper;
 using MetricsAgent;
 using MetricsAgent.Controllers;
 using Microsoft.Extensions.Logging;
@@ -12,12 +13,14 @@ namespace MetricsAgentTests
         private NetworkMetricsController _controller;
         private Mock<INetworkMetricsRepository> _mock;
         private Mock<ILogger<NetworkMetricsController>> _logger;
+        private Mock<IMapper> _mapper;
 
         public NetworkMetricsControllerUnitTests()
         {
             _mock = new Mock<INetworkMetricsRepository>();
             _logger = new Mock<ILogger<NetworkMetricsController>>();
-            _controller = new NetworkMetricsController(_logger.Object, _mock.Object);
+            _mapper = new Mock<IMapper>();
+            _controller = new NetworkMetricsController(_logger.Object, _mock.Object, _mapper.Object);
         }
 
         [Fact]
