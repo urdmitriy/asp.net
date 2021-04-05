@@ -75,5 +75,18 @@ namespace MetricsAgent
                     new { id = id });
             }
         }
+
+        public IList<RamMetrics> GetByDatePeriod(TimeSpan fromDate, TimeSpan toDate)
+        {
+            using (var connection = new SQLiteConnection(_connectionString))
+            {
+                return connection.Query<RamMetrics>("SELECT Id, Time, Value FROM cpumetrics WHERE time>@fromTime AND time<@toTime",
+                                                    new
+                                                    {
+                                                        fromTime = fromDate.TotalSeconds,
+                                                        toTime = toDate.TotalSeconds
+                                                    }).ToList();
+            }
+        }
     }
 }

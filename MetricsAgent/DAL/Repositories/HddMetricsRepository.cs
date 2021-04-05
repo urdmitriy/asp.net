@@ -74,5 +74,18 @@ namespace MetricsAgent
                     new { id = id });
             }
         }
+
+        public IList<HddMetric> GetByDatePeriod(TimeSpan fromDate, TimeSpan toDate)
+        {
+            using (var connection = new SQLiteConnection(_connectionString))
+            {
+                return connection.Query<HddMetric>("SELECT Id, Time, Value FROM hddmetrics WHERE time>@fromTime AND time<@toTime",
+                                                    new
+                                                    {
+                                                        fromTime = fromDate.TotalSeconds,
+                                                        toTime = toDate.TotalSeconds
+                                                    }).ToList();
+            }
+        }
     }
 }

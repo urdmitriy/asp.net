@@ -24,12 +24,12 @@ namespace MetricsAgent.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("available")]
-        public IActionResult GetMetricsFromAgent()
+        [HttpGet("available/from/{fromTime}/to/{toTime}")]
+        public IActionResult GetMetricsFromAgent([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
             _logger.LogInformation($"Запрос метрики Memory");
 
-            var metrics = _repository.GetAll();
+            var metrics = _repository.GetByDatePeriod(fromTime, toTime);
             var response = new AllRamMetricsResponse()
             {
                 Metrics = new List<RamMetricsDto>()

@@ -24,12 +24,12 @@ namespace MetricsAgent.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("left")]
-        public IActionResult GetMetricsFromAgent()
+        [HttpGet("left/from/{fromTime}/to/{toTime}")]
+        public IActionResult GetMetricsFromAgent([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
             _logger.LogInformation($"Запрос метрики HDD");
 
-            var metrics = _repository.GetAll();
+            var metrics = _repository.GetByDatePeriod(fromTime, toTime);
             var response = new AllHddMetricsResponse()
             {
                 Metrics = new List<HddMetricDto>()

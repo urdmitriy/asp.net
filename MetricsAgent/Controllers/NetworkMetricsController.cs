@@ -29,7 +29,7 @@ namespace MetricsAgent.Controllers
         {
             _logger.LogInformation($"Запрос метрики Network с {fromTime} по {toTime}");
 
-            var metrics = _repository.GetAll();
+            var metrics = _repository.GetByDatePeriod(fromTime, toTime);
             var response = new AllNetworkMetricsResponse()
             {
                 Metrics = new List<NetworkMetricsDto>()
@@ -37,10 +37,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                if (metric.Time > fromTime && metric.Time < toTime)
-                {
-                    response.Metrics.Add(_mapper.Map<NetworkMetricsDto>(metric));
-                }
+                response.Metrics.Add(_mapper.Map<NetworkMetricsDto>(metric));
             }
             return Ok(response);
         }

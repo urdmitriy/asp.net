@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentMigrator;
+using FluentMigrator.Runner;
+using Dapper;
 
 namespace MetricsAgent.Controllers
 {
@@ -30,7 +33,8 @@ namespace MetricsAgent.Controllers
         public IActionResult GetMetricsFromAgentByPercentille([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
         {
             _logger.LogInformation($"Запрос метрики CPU с {fromTime} по {toTime}, перцентиле {percentile}");
-            var metrics = _repository.GetAll();
+            var metrics = _repository.GetByDatePeriod(fromTime, toTime);
+
             var response = new AllCpuMetricsResponse()
             {
                 Metrics = new List<CpuMetricDto>()
@@ -38,10 +42,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                if (metric.Time > fromTime && metric.Time < toTime) //с перцентиле не разобрался
-                {
-                    response.Metrics.Add(_mapper.Map<CpuMetricDto>(metric));
-                }
+                response.Metrics.Add(_mapper.Map<CpuMetricDto>(metric));
             }
             return Ok(response);
         }
@@ -51,7 +52,8 @@ namespace MetricsAgent.Controllers
         {
             _logger.LogInformation($"Запрос метрики CPU с {fromTime} по {toTime}");
 
-            var metrics = _repository.GetAll();
+            var metrics = _repository.GetByDatePeriod(fromTime, toTime);
+
             var response = new AllCpuMetricsResponse()
             {
                 Metrics = new List<CpuMetricDto>()
@@ -59,10 +61,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                if (metric.Time>fromTime && metric.Time < toTime)
-                {
-                    response.Metrics.Add(_mapper.Map<CpuMetricDto>(metric));
-                }
+                response.Metrics.Add(_mapper.Map<CpuMetricDto>(metric));
             }
             return Ok(response);
         }
