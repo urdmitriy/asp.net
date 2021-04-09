@@ -1,15 +1,10 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentMigrator;
-using FluentMigrator.Runner;
-using Dapper;
+using MetricsAgent.DAL.DTO;
+using MetricsAgent.DAL.Repositories;
 
 namespace MetricsAgent.Controllers
 {

@@ -18,6 +18,7 @@ using Quartz.Impl;
 using MetricsAgent.Jobs;
 using FluentMigrator;
 using FluentMigrator.Runner;
+using MetricsAgent.DAL.Repositories;
 
 namespace MetricsAgent
 {

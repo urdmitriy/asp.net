@@ -1,11 +1,12 @@
-﻿using Dapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
-using System.Threading.Tasks;
+using Dapper;
+using MetricsAgent.DAL.Interfaces;
+using MetricsAgent.DAL.Models;
 
-namespace MetricsAgent
+namespace MetricsAgent.DAL.Repositories
 {
     public interface IRamMetricsRepository : IRepository<RamMetrics> 
     {
@@ -32,55 +33,12 @@ namespace MetricsAgent
                     });
             }
         }
-
-        public void Delete(int id)
-        {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Execute("DELETE FROM rammetrics WHERE id=@id",
-                    new
-                    {
-                        id = id
-                    });
-            }
-        }
-
-        public void Update(RamMetrics item)
-        {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Execute("UPDATE rammetrics SET value = @value, time = @time WHERE id=@id",
-                    new
-                    {
-                        value = item.Value,
-                        time = item.Time.TotalSeconds,
-                        id = item.Id
-                    });
-            }
-        }
-
-        public IList<RamMetrics> GetAll()
-        {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                return connection.Query<RamMetrics>("SELECT Id, Time, Value FROM rammetrics").ToList();
-            }
-        }
-
-        public RamMetrics GetById(int id)
-        {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                return connection.QuerySingle<RamMetrics>("SELECT Id, Time, Value FROM rammetrics WHERE id=@id",
-                    new { id = id });
-            }
-        }
-
+        
         public IList<RamMetrics> GetByDatePeriod(TimeSpan fromDate, TimeSpan toDate)
         {
             using (var connection = new SQLiteConnection(_connectionString))
             {
-                return connection.Query<RamMetrics>("SELECT Id, Time, Value FROM cpumetrics WHERE time>@fromTime AND time<@toTime",
+                return connection.Query<RamMetrics>("SELECT Id, Time, Value FROM rammetrics WHERE time>@fromTime AND time<@toTime",
                                                     new
                                                     {
                                                         fromTime = fromDate.TotalSeconds,

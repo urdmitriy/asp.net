@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace MetricsAgent
+namespace MetricsAgent.DAL.DTO
 {
     public class HddMetricDto
     {

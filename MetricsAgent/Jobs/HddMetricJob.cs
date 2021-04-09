@@ -7,6 +7,8 @@ using Quartz;
 using MetricsAgent;
 using System.Diagnostics;
 using System.IO;
+using MetricsAgent.DAL.Models;
+using MetricsAgent.DAL.Repositories;
 
 namespace MetricsAgent.Jobs
 {

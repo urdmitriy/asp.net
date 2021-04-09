@@ -1,26 +1,25 @@
+using AutoMapper;
 using MetricsAgent;
 using MetricsAgent.Controllers;
+using MetricsAgent.DAL.Models;
+using MetricsAgent.DAL.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
 using Xunit;
-using AutoMapper;
 
-namespace MetricsAgentTests
+namespace MetricAgentTest
 {
     public class CpuMetricsControllerUnitTests
     {
         private CpuMetricsController _controller;
-        private Mock<ICpuMetricsRepository> _mock;
-        private Mock<ILogger<CpuMetricsController>> _logger;
-        private Mock<IMapper> _mapper;
+        private readonly Mock<ICpuMetricsRepository> _mock;
 
         public CpuMetricsControllerUnitTests()
         {
             _mock = new Mock<ICpuMetricsRepository>();
-            _logger = new Mock<ILogger<CpuMetricsController>>();
-            _mapper = new Mock<IMapper>();
-            _controller = new CpuMetricsController(_logger.Object, _mock.Object, _mapper.Object);
+            var logger = new Mock<ILogger<CpuMetricsController>>();
+            var mapper = new Mock<IMapper>();
+            _controller = new CpuMetricsController(logger.Object, _mock.Object, mapper.Object);
             
         }
 

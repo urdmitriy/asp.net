@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using Dapper;
 using System.Linq;
-using System.Threading.Tasks;
-using FluentMigrator;
-using FluentMigrator.Runner;
+using Dapper;
+using MetricsAgent.DAL.Interfaces;
+using MetricsAgent.DAL.Models;
 
-namespace MetricsAgent
+namespace MetricsAgent.DAL.Repositories
 {
     public interface ICpuMetricsRepository : IRepository<CpuMetric> 
     {
@@ -35,32 +34,6 @@ namespace MetricsAgent
             }
         }
 
-        public void Delete(int id)
-        {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Execute("DELETE FROM cpumetrics WHERE id=@id",
-                    new
-                    {
-                        id = id
-                    });
-            }
-        }
-
-        public void Update(CpuMetric item)
-        {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Execute("UPDATE cpumetrics SET value = @value, time = @time WHERE id=@id",
-                    new
-                    {
-                        value = item.Value,
-                        time = item.Time.TotalSeconds,
-                        id = item.Id
-                    });
-            }
-        }
-
         public IList<CpuMetric> GetByDatePeriod(TimeSpan fromDate, TimeSpan toDate)
         {
             using (var connection = new SQLiteConnection(_connectionString))
@@ -71,13 +44,5 @@ namespace MetricsAgent
             }
         }
 
-        public CpuMetric GetById(int id)
-        {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                return connection.QuerySingle<CpuMetric>("SELECT Id, Time, Value FROM cpumetrics WHERE id=@id",
-                    new { id = id });
-            }
-        }
     }
 }

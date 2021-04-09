@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MetricsAgent.DAL.DTO;
+using MetricsAgent.DAL.Repositories;
+using MetricsAgent.Responses;
 
 namespace MetricsAgent.Controllers
 {

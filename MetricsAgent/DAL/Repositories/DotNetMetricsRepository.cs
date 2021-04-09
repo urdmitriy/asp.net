@@ -1,11 +1,12 @@
-﻿using Dapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
-using System.Threading.Tasks;
+using Dapper;
+using MetricsAgent.DAL.Interfaces;
+using MetricsAgent.DAL.Models;
 
-namespace MetricsAgent
+namespace MetricsAgent.DAL.Repositories
 {
     public interface IDotNetMetricsRepository : IRepository<DotNetMetric> 
     {
@@ -29,49 +30,6 @@ namespace MetricsAgent
                         value = item.Value,
                         time = item.Time.TotalSeconds
                     });
-            }
-        }
-
-        public void Delete(int id)
-        {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Execute("DELETE FROM dotnetmetrics WHERE id=@id",
-                    new
-                    {
-                        id = id
-                    });
-            }
-        }
-
-        public void Update(DotNetMetric item)
-        {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Execute("UPDATE dotnetmetrics SET value = @value, time = @time WHERE id=@id",
-                    new
-                    {
-                        value = item.Value,
-                        time = item.Time.TotalSeconds,
-                        id = item.Id
-                    });
-            }
-        }
-
-        public IList<DotNetMetric> GetAll()
-        {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                return connection.Query<DotNetMetric>("SELECT Id, Time, Value FROM dotnetmetrics").ToList();
-            }
-        }
-
-        public DotNetMetric GetById(int id)
-        {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                return connection.QuerySingle<DotNetMetric>("SELECT Id, Time, Value FROM dotnetmetrics WHERE id=@id",
-                    new { id = id });
             }
         }
 
