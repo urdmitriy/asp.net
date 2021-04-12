@@ -2,48 +2,47 @@ using MetricsManager;
 using MetricsManager.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using Moq;
 using Xunit;
+using MetricsAgent.DAL.Repositories;
+using Microsoft.Extensions.Logging;
+using AutoMapper;
+using MetricsAgent.DAL.Models;
 
 namespace MetricManagerTest
 {
     public class CpuControllerUnitTests
     {
         private CpuMetricsController _controller;
+        private readonly Mock<ICpuMetricsRepository> _mock;
 
         public CpuControllerUnitTests()
         {
-            _controller = new CpuMetricsController();
+            _mock = new Mock<ICpuMetricsRepository>();
+            var logger = new Mock<ILogger<CpuMetricsController>>();
+            var mapper = new Mock<IMapper>();
+            _controller = new CpuMetricsController(logger.Object);
         }
 
 
         [Fact]
         public void GetMetricsFromAgent_ReturnsOk()
         {
-            //Arrange
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
+            _mock.Setup(repository =>
+                repository.Create(It.IsAny<CpuMetric>())).Verifiable();
 
-            //Act
-            var result = _controller.GetMetricsFromAgent(fromTime, toTime);
-
-            // Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
+            _mock.Verify(repository => repository.Create(It.IsAny<CpuMetric>()),
+                Times.AtMostOnce());
 
         }
         [Fact]
         public void GetMetricsFromAgentByPercentille_ReturnsOk()
         {
-            //Arrange
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
-            Percentile percentile = Percentile.P99;
+            _mock.Setup(repository =>
+                repository.Create(It.IsAny<CpuMetric>())).Verifiable();
 
-            //Act
-            var result = _controller.GetMetricsFromAgentByPercentille(fromTime, toTime, percentile);
-
-            // Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
-
+            _mock.Verify(repository => repository.Create(It.IsAny<CpuMetric>()),
+                Times.AtMostOnce());
         }
     }
 }
