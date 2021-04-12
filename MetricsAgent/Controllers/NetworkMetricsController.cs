@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using MetricsAgent.DAL.DTO;
 using MetricsAgent.DAL.Repositories;
+using MetricsAgent.Responses;
+using System.Text.Json;
 
 namespace MetricsAgent.Controllers
 {

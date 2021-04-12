@@ -6,6 +6,10 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
+using MetricsManager.Client;
+using MetricsManager.DAL.Interfaces;
+using MetricsManager.DAL.Repositories;
+using MetricsManager.Requests;
 
 namespace MetricsManager.Controllers
 {
@@ -14,10 +18,15 @@ namespace MetricsManager.Controllers
     public class CpuMetricsController : ControllerBase
     {
         private readonly ILogger<CpuMetricsController> _logger;
-        public CpuMetricsController(ILogger<CpuMetricsController> logger)
+        private readonly IMetricsAgentClient _metricsAgentClient;
+        private readonly IAgentsRepository _repository;
+
+        public CpuMetricsController(ILogger<CpuMetricsController> logger, IMetricsAgentClient metricsAgentClient, IAgentsRepository repository)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в CpuMetricsController");
+            _metricsAgentClient = metricsAgentClient;
+            _repository = repository;
         }
 
         [HttpGet("agentId/{agentid}/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
@@ -30,22 +39,19 @@ namespace MetricsManager.Controllers
         [HttpGet("agentId/{agentid}/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
-            _logger.LogInformation($"Запрос метрики CPU с {fromTime} по {toTime}");
-            return Ok("");
+            _logger.LogInformation($"Запрос метрики CPU с агента {agentId} с {fromTime} по {toTime}");
+
+            string agentAddress = _repository.GetAddressForId(Convert.ToInt32(agentId));
+
+
+            var metrics = _metricsAgentClient.GetCpuMetrics(new GetAllCpuMetricsApiRequest
+            {
+                FromTime = fromTime,
+                ToTime = toTime,
+                ClientBaseAddress = agentAddress
+            });
+            return Ok(metrics);
         }
 
-        [HttpGet("agentId/{agentid}/cluster/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAllCluster([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
-        {
-            _logger.LogInformation($"Запрос метрики CPU кластеров с {fromTime} по {toTime}");
-            return Ok();
-        }
-
-        [HttpGet("agentId/{agentid}/cluster/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
-        public IActionResult GetMetricsByPercentileFromAllCluster([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
-        {
-            _logger.LogInformation($"Запрос метрики CPU кластерок с {fromTime} по {toTime}, перцентиле {percentile}");
-            return Ok();
-        }
     }
 }

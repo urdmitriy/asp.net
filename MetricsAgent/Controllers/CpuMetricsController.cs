@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using MetricsAgent.DAL.DTO;
 using MetricsAgent.DAL.Repositories;
+using MetricsAgent.Responses;
 
 namespace MetricsAgent.Controllers
 {
@@ -39,7 +41,9 @@ namespace MetricsAgent.Controllers
             {
                 response.Metrics.Add(_mapper.Map<CpuMetricDto>(metric));
             }
-            return Ok(response);
+
+            var result = JsonSerializer.Serialize<AllCpuMetricsResponse>(response);
+            return Ok(result);
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
@@ -58,6 +62,7 @@ namespace MetricsAgent.Controllers
             {
                 response.Metrics.Add(_mapper.Map<CpuMetricDto>(metric));
             }
+
             return Ok(response);
         }
     }

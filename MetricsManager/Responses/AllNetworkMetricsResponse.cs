@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using MetricsAgent.DAL.DTO;
+using MetricsManager.DAL.DTO;
 
-namespace MetricsAgent.Responses
+namespace MetricsManager.Responses
 {
     public class AllNetworkMetricsResponse
     {

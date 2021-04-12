@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using MetricsManager.DAL.Models;
+using MetricsManager.DAL.Repositories;
 
 namespace MetricsManager.Controllers
 {
@@ -13,25 +10,30 @@ namespace MetricsManager.Controllers
     public class AgentsController : ControllerBase
     {
         private readonly ILogger<AgentsController> _logger;
+        private readonly IAgentsRepository _repository;
 
-        public AgentsController(ILogger<AgentsController> logger)
+        public AgentsController(ILogger<AgentsController> logger, IAgentsRepository repository)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в AgentsController");
+            _repository = repository;
         }
 
         [HttpGet("registered")]
         public IActionResult GetRegisteredObjects()
         {
             _logger.LogInformation("Запрос зарегистрированных объектов");
-            return Ok("");
+            var agentList = _repository.GetAllAgents();
+
+            return Ok(agentList);
         }
 
         [HttpPost("register")]
-        public IActionResult RegisterAgent([FromBody] AgentInfo agentInfo)
+        public IActionResult RegisterAgent([FromBody] string agentAddress)
         {
             _logger.LogInformation("Регистриция агента");
-            return Ok("");
+            _repository.Create(new Agents {AgentUrl = agentAddress});
+            return Ok();
         }
 
         [HttpPut("enable/{agentId}")]
