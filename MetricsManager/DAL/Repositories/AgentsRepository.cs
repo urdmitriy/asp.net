@@ -20,7 +20,7 @@ namespace MetricsManager.DAL.Repositories
         private string _connectionString = @"Data Source = metricsManager.db; Version = 3; Pooling = True; Max Pool Size = 100;";
         public AgentsRepository()
         {
-            SqlMapper.AddTypeHandler(new TimeSpanHandler());
+            SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
         }
         
         public void Create(Agents item)

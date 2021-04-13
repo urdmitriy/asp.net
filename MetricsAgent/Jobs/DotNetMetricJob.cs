@@ -27,7 +27,8 @@ namespace MetricsAgent.Jobs
         public Task Execute(IJobExecutionContext context)
         {
             var dotNetHeap = Convert.ToInt32(_dotnetCounter.NextValue());
-            var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            var time = DateTimeOffset.UtcNow;
+           // var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 
             _repository.Create(new DotNetMetric { Time = time, Value = dotNetHeap });
 

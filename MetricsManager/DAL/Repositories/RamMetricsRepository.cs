@@ -8,7 +8,7 @@ using MetricsManager.DAL.Models;
 
 namespace MetricsManager.DAL.Repositories
 {
-    public interface IRamMetricsRepository //: IRepository<RamMetrics> 
+    public interface IRamMetricsRepository : IRepository<RamMetrics> 
     {
     
     }
@@ -18,32 +18,52 @@ namespace MetricsManager.DAL.Repositories
 
         public RamMetricsRepository()
         {
-            SqlMapper.AddTypeHandler(new TimeSpanHandler());
+            SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
         }
         
-        public void Create(RamMetrics item)
+        public void Create(int AgentId, RamMetrics item)
         {
             using (var connection = new SQLiteConnection(_connectionString))
             {
-                connection.Execute("INSERT INTO rammetrics(value, time) VALUES(@value, @time)",
+                connection.Execute("INSERT INTO rammetrics(agentid, value, time) VALUES(@agentid, @value, @time)",
                     new
                     {
+                        agentid = AgentId,
                         value = item.Value,
-                        time = item.Time.TotalSeconds
+                        time = item.Time.ToUnixTimeSeconds()
                     });
             }
         }
         
-        public IList<RamMetrics> GetByDatePeriod(TimeSpan fromDate, TimeSpan toDate)
+        public IList<RamMetrics> GetByDatePeriod(int AgentId, DateTimeOffset fromDate, DateTimeOffset toDate)
         {
             using (var connection = new SQLiteConnection(_connectionString))
             {
-                return connection.Query<RamMetrics>("SELECT Id, AgetnId, Time, Value FROM rammetrics WHERE time>@fromTime AND time<@toTime",
+                return connection.Query<RamMetrics>("SELECT Id, Time, Value FROM rammetrics WHERE agentid=@agentid AND time>@fromTime AND time<@toTime",
                                                     new
                                                     {
-                                                        fromTime = fromDate.TotalSeconds,
-                                                        toTime = toDate.TotalSeconds
+                                                        agenid = AgentId,
+                                                        fromTime = fromDate.ToUnixTimeSeconds(),
+                                                        toTime = toDate.ToUnixTimeSeconds()
                                                     }).ToList();
+            }
+        }
+        public DateTimeOffset GetDateTimeOfLastRecord(int AgentId)
+        {
+            using (var connection = new SQLiteConnection(_connectionString))
+            {
+                DateTimeOffset LastRecord = DateTimeOffset.FromUnixTimeSeconds(0);
+                try
+                {
+                    LastRecord = connection.QueryFirst<DateTimeOffset>($"SELECT Time FROM rammetrics WHERE agentid={AgentId} ORDER BY id DESC LIMIT 1");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+                LastRecord = LastRecord.ToLocalTime();
+                return LastRecord;
             }
         }
     }

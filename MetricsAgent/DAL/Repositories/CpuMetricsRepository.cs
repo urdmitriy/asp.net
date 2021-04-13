@@ -18,7 +18,8 @@ namespace MetricsAgent.DAL.Repositories
         private string _connectionString = @"Data Source = metrics.db; Version = 3; Pooling = True; Max Pool Size = 100;";
         public CpuMetricsRepository()
         {
-            SqlMapper.AddTypeHandler(new TimeSpanHandler());
+            //SqlMapper.AddTypeHandler(new TimeSpanHandler());
+            SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
         }
 
         public void Create(CpuMetric item)
@@ -29,18 +30,18 @@ namespace MetricsAgent.DAL.Repositories
                     new
                     {
                         value = item.Value,
-                        time = item.Time.TotalSeconds
+                        time = item.Time.ToUnixTimeSeconds()
                     });
             }
         }
 
-        public IList<CpuMetric> GetByDatePeriod(TimeSpan fromDate, TimeSpan toDate)
+        public IList<CpuMetric> GetByDatePeriod(DateTimeOffset fromDate, DateTimeOffset toDate)
         {
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 return connection.Query<CpuMetric>("SELECT Id, Time, Value FROM cpumetrics WHERE time>@fromTime AND time<@toTime",
-                                                    new { fromTime = fromDate.TotalSeconds,
-                                                          toTime = toDate.TotalSeconds}).ToList();
+                                                    new { fromTime = fromDate.ToUnixTimeSeconds(),
+                                                          toTime = toDate.ToUnixTimeSeconds()}).ToList();
             }
         }
 

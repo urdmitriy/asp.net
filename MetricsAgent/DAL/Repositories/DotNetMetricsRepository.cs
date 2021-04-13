@@ -17,7 +17,8 @@ namespace MetricsAgent.DAL.Repositories
         private string _connectionString = @"Data Source = metrics.db; Version = 3; Pooling = True; Max Pool Size = 100;";
         public DotNetMetricsRepository()
         {
-            SqlMapper.AddTypeHandler(new TimeSpanHandler());
+            //SqlMapper.AddTypeHandler(new TimeSpanHandler());
+            SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
         }
         
         public void Create(DotNetMetric item)
@@ -28,20 +29,20 @@ namespace MetricsAgent.DAL.Repositories
                     new
                     {
                         value = item.Value,
-                        time = item.Time.TotalSeconds
+                        time = item.Time.ToUnixTimeSeconds()
                     });
             }
         }
 
-        public IList<DotNetMetric> GetByDatePeriod(TimeSpan fromDate, TimeSpan toDate)
+        public IList<DotNetMetric> GetByDatePeriod(DateTimeOffset fromDate, DateTimeOffset toDate)
         {
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 return connection.Query<DotNetMetric>("SELECT Id, Time, Value FROM dotnetmetrics WHERE time>@fromTime AND time<@toTime",
                                                     new
                                                     {
-                                                        fromTime = fromDate.TotalSeconds,
-                                                        toTime = toDate.TotalSeconds
+                                                        fromTime = fromDate.ToUnixTimeSeconds(),
+                                                        toTime = toDate.ToUnixTimeSeconds()
                                                     }).ToList();
             }
         }

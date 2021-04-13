@@ -28,7 +28,7 @@ namespace MetricsManager.Controllers
         }
 
         [HttpGet("agentId/{agentid}/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
             _logger.LogInformation($"Запрос метрики Network с {fromTime} по {toTime}");
 
@@ -36,8 +36,8 @@ namespace MetricsManager.Controllers
 
             var metrics = _metricsAgentClient.GetNetworkMetrics(new GetAllNetworkMetricsApiRequest()
             {
-                FromTime = fromTime,
-                ToTime = toTime,
+                FromTime = fromTime.UtcDateTime,
+                ToTime = toTime.UtcDateTime,
                 ClientBaseAddress = agentAddress
             });
             return Ok(metrics);

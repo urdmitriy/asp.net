@@ -18,6 +18,11 @@ using MetricsManager.DAL.Repositories;
 using AutoMapper;
 using FluentMigrator;
 using FluentMigrator.Runner;
+using MetricsManager.Jobs;
+using Quartz.Spi;
+using Quartz;
+using Quartz.Impl;
+
 
 namespace MetricsManager
 {
@@ -43,8 +48,36 @@ namespace MetricsManager
             services.AddSingleton<IAgentsRepository, AgentsRepository>();
             services.AddSingleton<IMetricsAgentClient, MetricsAgentClient>();
 
+            services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
+            services.AddSingleton<CpuMetricJob>();
+            services.AddSingleton<DotNetMetricJob>();
+            services.AddSingleton<HddMetricJob>();
+            services.AddSingleton<NetworkMetricJob>();
+            services.AddSingleton<RamMetricJob>();
 
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(CpuMetricJob),
+                cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
+
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(DotNetMetricJob),
+                cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
+
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(HddMetricJob),
+                cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
+
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(NetworkMetricJob),
+                cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
+
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(RamMetricJob),
+                cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
+
+            services.AddHostedService<QuartzHostedService>();
 
             var mapperConfiguration = new MapperConfiguration(mp => mp.AddProfile(new MapperProfile()));
             var mapper = mapperConfiguration.CreateMapper();

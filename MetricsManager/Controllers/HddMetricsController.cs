@@ -28,7 +28,7 @@ namespace MetricsManager.Controllers
         }
 
         [HttpGet("agentId/{agentid}/left/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
             _logger.LogInformation($"Запрос метрики HDD");
 
@@ -37,8 +37,8 @@ namespace MetricsManager.Controllers
 
             var metrics = _metricsAgentClient.GetHddMetrics(new GetAllHddMetricsApiRequest()
             {
-                FromTime = fromTime,
-                ToTime = toTime,
+                FromTime = fromTime.UtcDateTime,
+                ToTime = toTime.UtcDateTime,
                 ClientBaseAddress = agentAddress
             });
             return Ok(metrics);

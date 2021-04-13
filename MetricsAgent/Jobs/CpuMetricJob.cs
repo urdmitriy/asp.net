@@ -26,13 +26,9 @@ namespace MetricsAgent.Jobs
 
         public Task Execute(IJobExecutionContext context)
         {
-            // получаем значение занятости CPU
             var cpuUsageInPercents = Convert.ToInt32(_cpuCounter.NextValue());
 
-            // узнаем когда мы сняли значение метрики.
-            var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-
-            // теперь можно записать что-то при помощи репозитория
+            var time = DateTimeOffset.UtcNow;
 
             _repository.Create(new CpuMetric { Time = time, Value = cpuUsageInPercents });
 

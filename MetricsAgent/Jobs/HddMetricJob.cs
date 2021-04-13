@@ -28,8 +28,8 @@ namespace MetricsAgent.Jobs
         public Task Execute(IJobExecutionContext context)
         {
             var hddFreeSpaceInMBytes = Convert.ToInt32(_hddCounter.NextValue());
-            var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-
+            //var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            var time = DateTimeOffset.UtcNow;
             _repository.Create(new HddMetric { Time = time, Value = hddFreeSpaceInMBytes });
 
             return Task.CompletedTask;

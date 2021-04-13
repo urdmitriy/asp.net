@@ -27,7 +27,7 @@ namespace MetricsAgent.Controllers
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
-        public IActionResult GetMetricsFromAgentByPercentille([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
+        public IActionResult GetMetricsFromAgentByPercentille([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime, [FromRoute] Percentile percentile)
         {
             _logger.LogInformation($"Запрос метрики CPU с {fromTime} по {toTime}, перцентиле {percentile}");
             var metrics = _repository.GetByDatePeriod(fromTime, toTime);
@@ -47,11 +47,15 @@ namespace MetricsAgent.Controllers
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAgent([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        public IActionResult GetMetricsFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
             _logger.LogInformation($"Запрос метрики CPU с {fromTime} по {toTime}");
 
-            var metrics = _repository.GetByDatePeriod(fromTime, toTime);
+            DateTimeOffset timeFrom = fromTime.UtcDateTime;
+            DateTimeOffset timeto = toTime.UtcDateTime;
+
+
+            var metrics = _repository.GetByDatePeriod(timeFrom ,timeto.UtcDateTime);
 
             var response = new AllCpuMetricsResponse()
             {

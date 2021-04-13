@@ -2,32 +2,42 @@ using MetricsManager;
 using MetricsManager.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
+using MetricsManager.DAL.Interfaces;
+using MetricsManager.DAL.Models;
+using MetricsManager.DAL.Repositories;
 
 namespace MetricManagerTest
 {
-    public class DotNetControllerUnitTests
+    public class DotNetMetricsControllerUnitTests
     {
-        private DotNetMetricsController _controller;
 
-        public DotNetControllerUnitTests()
+        private DotNetMetricsController _controller;
+        private readonly Mock<IDotNetMetricsRepository> _mock;
+
+        public DotNetMetricsControllerUnitTests()
         {
-            _controller = new DotNetMetricsController();
+            _mock = new Mock<IDotNetMetricsRepository>();
+            var logger = new Mock<ILogger<DotNetMetricsController>>();
+            var agentClient = new Mock<IMetricsAgentClient>();
+            var agentRepository = new Mock<IAgentsRepository>();
+            _controller = new DotNetMetricsController(logger.Object, agentClient.Object, agentRepository.Object);
         }
 
 
         [Fact]
         public void GetMetricsFromAgent_ReturnsOk()
         {
-            //Arrange
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
+            int AgentId = 1;
 
-            //Act
-            var result = _controller.GetMetricsFromAgent(fromTime, toTime);
+            _mock.Setup(repository =>
+                repository.Create(AgentId, It.IsAny<DotNetMetric>())).Verifiable();
 
-            // Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
+            _mock.Verify(repository => repository.Create(AgentId, It.IsAny<DotNetMetric>()),
+                Times.AtMostOnce());
 
         }
     }

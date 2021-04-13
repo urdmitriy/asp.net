@@ -29,11 +29,14 @@ namespace MetricsAgent.Controllers
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAgent([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        public IActionResult GetMetricsFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
             _logger.LogInformation($"Запрос метрики Network с {fromTime} по {toTime}");
 
-            var metrics = _repository.GetByDatePeriod(fromTime, toTime);
+            DateTimeOffset timeFrom = fromTime.UtcDateTime;
+            DateTimeOffset timeto = toTime.UtcDateTime;
+
+            var metrics = _repository.GetByDatePeriod(timeFrom, timeto);
             var response = new AllNetworkMetricsResponse()
             {
                 Metrics = new List<NetworkMetricsDto>()

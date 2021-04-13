@@ -1,5 +1,4 @@
 using AutoMapper;
-using MetricsAgent;
 using MetricsAgent.Controllers;
 using MetricsAgent.DAL.Models;
 using MetricsAgent.DAL.Repositories;

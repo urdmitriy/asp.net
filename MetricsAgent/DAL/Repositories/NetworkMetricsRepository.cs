@@ -18,7 +18,8 @@ namespace MetricsAgent.DAL.Repositories
 
         public NetworkMetricsRepository()
         {
-            SqlMapper.AddTypeHandler(new TimeSpanHandler());
+            //SqlMapper.AddTypeHandler(new TimeSpanHandler());
+            SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
         }
         
         public void Create(NetworkMetrics item)
@@ -29,20 +30,20 @@ namespace MetricsAgent.DAL.Repositories
                     new
                     {
                         value = item.Value,
-                        time = item.Time.TotalSeconds
+                        time = item.Time.ToUnixTimeSeconds()
                     });
             }
         }
 
-        public IList<NetworkMetrics> GetByDatePeriod(TimeSpan fromDate, TimeSpan toDate)
+        public IList<NetworkMetrics> GetByDatePeriod(DateTimeOffset fromDate, DateTimeOffset toDate)
         {
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 return connection.Query<NetworkMetrics>("SELECT Id, Time, Value FROM networkmetrics WHERE time>@fromTime AND time<@toTime",
                                                     new
                                                     {
-                                                        fromTime = fromDate.TotalSeconds,
-                                                        toTime = toDate.TotalSeconds
+                                                        fromTime = fromDate.ToUnixTimeSeconds(),
+                                                        toTime = toDate.ToUnixTimeSeconds()
                                                     }).ToList();
             }
         }

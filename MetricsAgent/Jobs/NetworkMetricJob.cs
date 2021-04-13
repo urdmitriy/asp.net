@@ -42,7 +42,8 @@ namespace MetricsAgent.Jobs
                 networkUsageRx += (int)item.NextValue();
             }
 
-            var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            //var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            var time = DateTimeOffset.UtcNow;
 
             _repository.Create(new NetworkMetrics { Time = time, Value = networkUsageRx });
 

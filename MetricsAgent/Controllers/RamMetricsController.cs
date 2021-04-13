@@ -29,11 +29,15 @@ namespace MetricsAgent.Controllers
         }
 
         [HttpGet("available/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAgent([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        public IActionResult GetMetricsFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
             _logger.LogInformation($"Запрос метрики Memory");
 
-            var metrics = _repository.GetByDatePeriod(fromTime, toTime);
+
+            DateTimeOffset timeFrom = fromTime.UtcDateTime;
+            DateTimeOffset timeto = toTime.UtcDateTime;
+
+            var metrics = _repository.GetByDatePeriod(timeFrom, timeto);
             var response = new AllRamMetricsResponse()
             {
                 Metrics = new List<RamMetricsDto>()

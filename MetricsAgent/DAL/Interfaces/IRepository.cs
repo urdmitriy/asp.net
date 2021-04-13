@@ -5,7 +5,7 @@ namespace MetricsAgent.DAL.Interfaces
 {
     public interface IRepository<T> where T : class
     {
-        IList<T> GetByDatePeriod(TimeSpan fromDate, TimeSpan toDate);
+        IList<T> GetByDatePeriod(DateTimeOffset fromDate, DateTimeOffset toDate);
 
         void Create(T item);
     }
