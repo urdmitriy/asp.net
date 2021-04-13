@@ -19,14 +19,16 @@ namespace MetricsManager.Controllers
     {
         private readonly ILogger<CpuMetricsController> _logger;
         private readonly IMetricsAgentClient _metricsAgentClient;
-        private readonly IAgentsRepository _repository;
+        private readonly IAgentsRepository _repositoryAgent;
+        private readonly ICpuMetricsRepository _repositoryCpu;
 
-        public CpuMetricsController(ILogger<CpuMetricsController> logger, IMetricsAgentClient metricsAgentClient, IAgentsRepository repository)
+        public CpuMetricsController(ILogger<CpuMetricsController> logger, IMetricsAgentClient metricsAgentClient, IAgentsRepository repositoryAgent, ICpuMetricsRepository repositoryCpu)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в CpuMetricsController");
             _metricsAgentClient = metricsAgentClient;
-            _repository = repository;
+            _repositoryAgent = repositoryAgent;
+            _repositoryCpu = repositoryCpu;
         }
 
         [HttpGet("agentId/{agentid}/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
@@ -41,7 +43,7 @@ namespace MetricsManager.Controllers
         {
             _logger.LogInformation($"Запрос метрики CPU с агента {agentId} с {fromTime} по {toTime}");
 
-            string agentAddress = _repository.GetAddressForId(Convert.ToInt32(agentId));
+            string agentAddress = _repositoryAgent.GetAddressForId(Convert.ToInt32(agentId));
 
 
             var metrics = _metricsAgentClient.GetCpuMetrics(new GetAllCpuMetricsApiRequest
@@ -50,6 +52,13 @@ namespace MetricsManager.Controllers
                 ToTime = toTime,
                 ClientBaseAddress = agentAddress
             });
+
+            //foreach (var VARIABLE in metrics.Metrics)
+            //{
+            //    _repositoryCpu.Create((int)agentId, VARIABLE);
+            //}
+            
+
             return Ok(metrics);
         }
 

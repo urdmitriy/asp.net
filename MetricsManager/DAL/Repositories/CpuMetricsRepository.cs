@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
 using Dapper;
+using MetricsManager.DAL.DTO;
 using MetricsManager.DAL.Interfaces;
 using MetricsManager.DAL.Models;
 
@@ -21,20 +22,21 @@ namespace MetricsManager.DAL.Repositories
             SqlMapper.AddTypeHandler(new TimeSpanHandler());
         }
 
-        public void Create(CpuMetric item)
+        public void Create(int AgentId, CpuMetric item)
         {
             using (var connection = new SQLiteConnection(_connectionString))
             {
-                connection.Execute("INSERT INTO cpumetrics(value, time) VALUES(@value, @time)",
+                connection.Execute("INSERT INTO cpumetrics(agentid, value, time) VALUES(@agentid, @value, @time)",
                     new
                     {
+                        agentid = AgentId,
                         value = item.Value,
                         time = item.Time.TotalSeconds
                     });
             }
         }
 
-        public IList<CpuMetric> GetByDatePeriod(TimeSpan fromDate, TimeSpan toDate)
+        public IList<CpuMetric> GetByDatePeriod(int AgentId, TimeSpan fromDate, TimeSpan toDate)
         {
             using (var connection = new SQLiteConnection(_connectionString))
             {

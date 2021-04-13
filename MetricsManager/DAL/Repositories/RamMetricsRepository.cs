@@ -8,7 +8,7 @@ using MetricsManager.DAL.Models;
 
 namespace MetricsManager.DAL.Repositories
 {
-    public interface IRamMetricsRepository : IRepository<RamMetrics> 
+    public interface IRamMetricsRepository //: IRepository<RamMetrics> 
     {
     
     }
@@ -38,7 +38,7 @@ namespace MetricsManager.DAL.Repositories
         {
             using (var connection = new SQLiteConnection(_connectionString))
             {
-                return connection.Query<RamMetrics>("SELECT Id, Time, Value FROM rammetrics WHERE time>@fromTime AND time<@toTime",
+                return connection.Query<RamMetrics>("SELECT Id, AgetnId, Time, Value FROM rammetrics WHERE time>@fromTime AND time<@toTime",
                                                     new
                                                     {
                                                         fromTime = fromDate.TotalSeconds,

@@ -8,7 +8,7 @@ using MetricsManager.DAL.Models;
 
 namespace MetricsManager.DAL.Repositories
 {
-    public interface INetworkMetricsRepository : IRepository<NetworkMetrics> 
+    public interface INetworkMetricsRepository //: IRepository<NetworkMetrics> 
     {
     
     }

@@ -8,7 +8,7 @@ using MetricsManager.DAL.Models;
 
 namespace MetricsManager.DAL.Repositories
 {
-    public interface IHddMetricsRepository : IRepository<HddMetric> 
+    public interface IHddMetricsRepository //: IRepository<HddMetric> 
     {
     
     }

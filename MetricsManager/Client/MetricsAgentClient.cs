@@ -75,8 +75,10 @@ namespace MetricsManager.Client
                 using var responseStream = response.Content.ReadAsStreamAsync().Result;
 
 
+                ///
                 //using var streamReader = new StreamReader(responseStream);
                 //var content = streamReader.ReadToEnd();
+                ///
 
 
                 var res = JsonSerializer.DeserializeAsync<AllCpuMetricsResponse>(responseStream,
