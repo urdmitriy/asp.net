@@ -29,7 +29,20 @@ namespace MetricsManager.Controllers
             _repository = repository;
             _mapper = mapper;
         }
-
+        /// <summary>
+        /// Получает метрики HDD - свободное место на заданном диапазоне времени
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     GET api/metrics/hdd/agentId/1/left/from/1/to/9999999999
+        ///
+        /// </remarks>
+        /// <param name="fromTime">начальная метрка времени в секундах с 01.01.1970</param>
+        /// <param name="toTime">конечная метрка времени в секундах с 01.01.1970</param>
+        /// <returns>Список метрик, которые были сохранены в заданном диапазоне времени</returns>
+        /// <response code="201">Если все хорошо</response>
+        /// <response code="400">если передали неправильные параетры</response> 
         [HttpGet("agentId/{agentid}/left/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {

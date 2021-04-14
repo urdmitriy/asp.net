@@ -7,7 +7,7 @@ using MetricsManager.Requests;
 using MetricsManager.Responses;
 using Microsoft.Extensions.Logging;
 
-namespace MetricsManager.Client
+namespace MetricsManager
 {
     public class MetricsAgentClient : IMetricsAgentClient
     {

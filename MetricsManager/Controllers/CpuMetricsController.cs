@@ -27,7 +27,6 @@ namespace MetricsManager.Controllers
             _repository = repository;
             _mapper = mapper;
         }
-
         [HttpGet("agentId/{agentid}/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
         public IActionResult GetMetricsFromAgentByPercentille([FromRoute] int agentId, [FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime, [FromRoute] Percentile percentile)
         {
@@ -35,6 +34,20 @@ namespace MetricsManager.Controllers
             return Ok("");
         }
 
+        /// <summary>
+        /// Получает метрики CPU на заданном диапазоне времени
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     GET api/metrics/cpu/agentId/1/from/1/to/9999999999
+        ///
+        /// </remarks>
+        /// <param name="fromTime">начальная метрка времени в секундах с 01.01.1970</param>
+        /// <param name="toTime">конечная метрка времени в секундах с 01.01.1970</param>
+        /// <returns>Список метрик, которые были сохранены в заданном диапазоне времени</returns>
+        /// <response code="201">Если все хорошо</response>
+        /// <response code="400">если передали неправильные параетры</response> 
         [HttpGet("agentId/{agentid}/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {

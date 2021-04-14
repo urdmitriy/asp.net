@@ -18,7 +18,18 @@ namespace MetricsManager.Controllers
             _logger.LogDebug(1, "NLog встроен в AgentsController");
             _repository = repository;
         }
-
+        /// <summary>
+        /// Показывает зарегистрированных в системе агентов
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     GET api/registered
+        ///
+        /// </remarks>
+        /// <returns>Список агентов, зарегистрированных в системе</returns>
+        /// <response code="201">Если все хорошо</response>
+        /// <response code="400">если передали неправильные параетры</response> 
         [HttpGet("registered")]
         public IActionResult GetRegisteredObjects()
         {
@@ -27,27 +38,24 @@ namespace MetricsManager.Controllers
 
             return Ok(agentList);
         }
-
+        /// <summary>
+        /// Регистрирует в системе агентов
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     POST api/register
+        ///
+        /// </remarks>
+        /// <param name="agentAddress">адрес агента</param>
+        /// <response code="201">Если все хорошо</response>
+        /// <response code="400">если передали неправильные параетры</response> 
         [HttpPost("register")]
         public IActionResult RegisterAgent([FromBody] string agentAddress)
         {
             _logger.LogInformation("Регистриция агента");
             _repository.Create(new Agents {AgentUrl = agentAddress});
             return Ok();
-        }
-
-        [HttpPut("enable/{agentId}")]
-        public IActionResult EnableAgentById([FromRoute] int agentId)
-        {
-            _logger.LogInformation($"Запрос активации агента {agentId}");
-            return Ok("");
-        }
-
-        [HttpPut("disable/{agentId}")]
-        public IActionResult DisableAgentById([FromRoute] int agentId)
-        {
-            _logger.LogInformation($"Запрос деактивации агента {agentId}");
-            return Ok("");
         }
     }
 }
