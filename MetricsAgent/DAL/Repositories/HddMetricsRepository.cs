@@ -14,7 +14,6 @@ namespace MetricsAgent.DAL.Repositories
     }
     public class HddMetricsRepository : IHddMetricsRepository
     {
-        private string _connectionString = @"Data Source = metrics.db; Version = 3; Pooling = True; Max Pool Size = 100;";
         public HddMetricsRepository()
         {
             //SqlMapper.AddTypeHandler(new TimeSpanHandler());
@@ -23,7 +22,7 @@ namespace MetricsAgent.DAL.Repositories
         
         public void Create(HddMetric item)
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
                 connection.Execute("INSERT INTO hddmetrics(value, time) VALUES(@value, @time)",
                     new
@@ -36,7 +35,7 @@ namespace MetricsAgent.DAL.Repositories
 
         public IList<HddMetric> GetByDatePeriod(DateTimeOffset fromDate, DateTimeOffset toDate)
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
                 return connection.Query<HddMetric>("SELECT Id, Time, Value FROM hddmetrics WHERE time>@fromTime AND time<@toTime",
                                                     new

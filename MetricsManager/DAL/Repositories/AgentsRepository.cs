@@ -17,7 +17,6 @@ namespace MetricsManager.DAL.Repositories
     }
     public class AgentsRepository : IAgentsRepository
     {
-        private string _connectionString = @"Data Source = metricsManager.db; Version = 3; Pooling = True; Max Pool Size = 100;";
         public AgentsRepository()
         {
             SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
@@ -25,7 +24,7 @@ namespace MetricsManager.DAL.Repositories
         
         public void Create(Agents item)
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
                 connection.Execute("INSERT INTO agents(AgentUrl) VALUES(@AgentUrl)",
                     new
@@ -37,7 +36,7 @@ namespace MetricsManager.DAL.Repositories
 
         public IList<Agents> GetAllAgents()
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
                 var response = connection.Query<Agents>("SELECT AgentId, AgentUrl FROM agents", null).ToList();
 
@@ -47,7 +46,7 @@ namespace MetricsManager.DAL.Repositories
 
         public string GetAddressForId(int id)
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
                 var response = connection.Query<string>("SELECT AgentUrl FROM agents WHERE AgentId=@AgentId", new
                     {

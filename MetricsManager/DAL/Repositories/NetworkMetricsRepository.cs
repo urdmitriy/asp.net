@@ -14,8 +14,6 @@ namespace MetricsManager.DAL.Repositories
     }
     public class NetworkMetricsRepository : INetworkMetricsRepository 
     {
-        private string _connectionString = @"Data Source = metricsManager.db; Version = 3; Pooling = True; Max Pool Size = 100;";
-
         public NetworkMetricsRepository()
         {
             SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
@@ -23,7 +21,7 @@ namespace MetricsManager.DAL.Repositories
         
         public void Create(int AgentId, NetworkMetrics item)
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
                 connection.Execute("INSERT INTO networkmetrics(agentid, value, time) VALUES(@agentid, @value, @time)",
                     new
@@ -37,7 +35,7 @@ namespace MetricsManager.DAL.Repositories
 
         public IList<NetworkMetrics> GetByDatePeriod(int AgentId, DateTimeOffset fromDate, DateTimeOffset toDate)
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
                 return connection.Query<NetworkMetrics>("SELECT Id, Time, Value FROM networkmetrics WHERE agentid=@agentid time>@fromTime AND time<@toTime",
                                                     new
@@ -50,7 +48,7 @@ namespace MetricsManager.DAL.Repositories
         }
         public DateTimeOffset GetDateTimeOfLastRecord(int AgentId)
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
                 DateTimeOffset LastRecord = DateTimeOffset.FromUnixTimeSeconds(0);
                 try

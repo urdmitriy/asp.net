@@ -14,7 +14,6 @@ namespace MetricsManager.DAL.Repositories
     }
     public class HddMetricsRepository : IHddMetricsRepository
     {
-        private string _connectionString = @"Data Source = metricsManager.db; Version = 3; Pooling = True; Max Pool Size = 100;";
         public HddMetricsRepository()
         {
             SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
@@ -22,7 +21,7 @@ namespace MetricsManager.DAL.Repositories
         
         public void Create(int AgentId, HddMetric item)
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
                 connection.Execute("INSERT INTO hddmetrics(agentid, value, time) VALUES(@agentid, @value, @time)",
                     new
@@ -36,7 +35,7 @@ namespace MetricsManager.DAL.Repositories
 
         public IList<HddMetric> GetByDatePeriod(int AgentId, DateTimeOffset fromDate, DateTimeOffset toDate)
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
                 return connection.Query<HddMetric>("SELECT Id, Time, Value FROM hddmetrics WHERE agentid=@agentid AND time>@fromTime AND time<@toTime",
                                                     new
@@ -49,7 +48,7 @@ namespace MetricsManager.DAL.Repositories
         }
         public DateTimeOffset GetDateTimeOfLastRecord(int AgentId)
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
                 DateTimeOffset LastRecord = DateTimeOffset.FromUnixTimeSeconds(0);
                 try
