@@ -22,9 +22,9 @@ namespace MetricManagerTest
         {
             _mock = new Mock<IRamMetricsRepository>();
             var logger = new Mock<ILogger<RamMetricsController>>();
-            var agentClient = new Mock<IMetricsAgentClient>();
-            var agentRepository = new Mock<IAgentsRepository>();
-            _controller = new RamMetricsController(logger.Object, agentClient.Object, agentRepository.Object);
+            var ramRepository = new Mock<IRamMetricsRepository>();
+            var mapper = new Mock<IMapper>();
+            _controller = new RamMetricsController(logger.Object, ramRepository.Object, mapper.Object);
         }
 
 

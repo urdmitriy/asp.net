@@ -22,9 +22,9 @@ namespace MetricManagerTest
         {
             _mock = new Mock<INetworkMetricsRepository>();
             var logger = new Mock<ILogger<NetworkMetricsController>>();
-            var agentClient = new Mock<IMetricsAgentClient>();
-            var agentRepository = new Mock<IAgentsRepository>();
-            _controller = new NetworkMetricsController(logger.Object, agentClient.Object, agentRepository.Object);
+            var netRepository = new Mock<INetworkMetricsRepository>();
+            var mapper = new Mock<IMapper>();
+            _controller = new NetworkMetricsController(logger.Object, netRepository.Object, mapper.Object);
         }
 
 

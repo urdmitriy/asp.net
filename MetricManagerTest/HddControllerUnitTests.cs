@@ -22,9 +22,9 @@ namespace MetricManagerTest
         {
             _mock = new Mock<IHddMetricsRepository>();
             var logger = new Mock<ILogger<HddMetricsController>>();
-            var agentClient = new Mock<IMetricsAgentClient>();
-            var agentRepository = new Mock<IAgentsRepository>();
-            _controller = new HddMetricsController(logger.Object, agentClient.Object, agentRepository.Object);
+            var hddRepository = new Mock<IHddMetricsRepository>();
+            var mapper = new Mock<IMapper>();
+            _controller = new HddMetricsController(logger.Object, hddRepository.Object, mapper.Object);
         }
 
 

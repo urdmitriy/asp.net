@@ -55,7 +55,7 @@ namespace MetricsAgent.Controllers
             DateTimeOffset timeto = toTime.UtcDateTime;
 
 
-            var metrics = _repository.GetByDatePeriod(timeFrom ,timeto.UtcDateTime);
+            var metrics = _repository.GetByDatePeriod(timeFrom, timeto);
 
             var response = new AllCpuMetricsResponse()
             {

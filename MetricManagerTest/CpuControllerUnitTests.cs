@@ -1,3 +1,4 @@
+using AutoMapper;
 using MetricsManager.Controllers;
 using MetricsManager.DAL.Interfaces;
 using MetricsManager.DAL.Models;
@@ -18,10 +19,9 @@ namespace MetricManagerTest
         {
             _mock = new Mock<ICpuMetricsRepository>();
             var logger = new Mock<ILogger<CpuMetricsController>>();
-            var agentClient = new Mock<IMetricsAgentClient>();
-            var agentRepository = new Mock<IAgentsRepository>();
             var cpuRepository = new Mock<ICpuMetricsRepository>();
-            _controller = new CpuMetricsController(logger.Object, agentClient.Object, agentRepository.Object);
+            var mapper = new Mock<IMapper>();
+            _controller = new CpuMetricsController(logger.Object, cpuRepository.Object, mapper.Object);
         }
 
 

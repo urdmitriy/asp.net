@@ -28,7 +28,6 @@ namespace MetricsAgent.Jobs
         {
             var dotNetHeap = Convert.ToInt32(_dotnetCounter.NextValue());
             var time = DateTimeOffset.UtcNow;
-           // var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 
             _repository.Create(new DotNetMetric { Time = time, Value = dotNetHeap });
 

@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using AutoMapper;
 using MetricsManager.DAL.Interfaces;
+using MetricsManager.DAL.Models;
 using MetricsManager.DAL.Repositories;
 using MetricsManager.Requests;
+using MetricsManager.Responses;
 
 namespace MetricsManager.Controllers
 {
@@ -12,29 +16,37 @@ namespace MetricsManager.Controllers
     public class RamMetricsController : ControllerBase
     {
         private readonly ILogger<RamMetricsController> _logger;
-        private readonly IMetricsAgentClient _metricsAgentClient;
-        private readonly IAgentsRepository _repository;
+        private readonly IRamMetricsRepository _repository;
+        private readonly IMapper _mapper;
 
-        public RamMetricsController(ILogger<RamMetricsController> logger, IMetricsAgentClient metricsAgentClient, IAgentsRepository repository)
+        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в RamMetricsController");
-            _metricsAgentClient = metricsAgentClient;
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet("agentId/{agentid}/available/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
             _logger.LogInformation($"Запрос метрики Memory");
-            string agentAddress = _repository.GetAddressForId(Convert.ToInt32(agentId));
-            var metrics = _metricsAgentClient.GetRamMetrics(new GetAllRamMetricsApiRequest
+            DateTimeOffset timeFrom = fromTime.UtcDateTime;
+            DateTimeOffset timeto = toTime.UtcDateTime;
+
+            var metrics = _repository.GetByDatePeriod(agentId, timeFrom, timeto);
+
+            var response = new AllRamMetricsResponse()
             {
-                FromTime = fromTime.UtcDateTime,
-                ToTime = toTime.UtcDateTime,
-                ClientBaseAddress = agentAddress
-            });
-            return Ok(metrics);
+                Metrics = new List<RamMetrics>()
+            };
+
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add((RamMetrics)_mapper.Map<RamMetrics>(metric));
+            }
+
+            return Ok(response);
         }
 
     }

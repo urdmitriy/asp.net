@@ -19,49 +19,48 @@ namespace MetricsManager.DAL.Repositories
             SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
         }
         
-        public void Create(int AgentId, NetworkMetrics item)
+        public void Create(int agentId, NetworkMetrics item)
         {
             using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
                 connection.Execute("INSERT INTO networkmetrics(agentid, value, time) VALUES(@agentid, @value, @time)",
                     new
                     {
-                        agentid = AgentId,
+                        agentid = agentId,
                         value = item.Value,
                         time = item.Time.ToUnixTimeSeconds()
                     });
             }
         }
 
-        public IList<NetworkMetrics> GetByDatePeriod(int AgentId, DateTimeOffset fromDate, DateTimeOffset toDate)
+        public IList<NetworkMetrics> GetByDatePeriod(int agentId, DateTimeOffset fromDate, DateTimeOffset toDate)
         {
             using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
                 return connection.Query<NetworkMetrics>("SELECT Id, Time, Value FROM networkmetrics WHERE agentid=@agentid time>@fromTime AND time<@toTime",
                                                     new
                                                     {
-                                                        agentid = AgentId,
+                                                        agentid = agentId,
                                                         fromTime = fromDate.ToUnixTimeSeconds(),
                                                         toTime = toDate.ToUnixTimeSeconds()
                                                     }).ToList();
             }
         }
-        public DateTimeOffset GetDateTimeOfLastRecord(int AgentId)
+        public DateTimeOffset GetDateTimeOfLastRecord(int agentId)
         {
+            DateTimeOffset lastRecord;
+
             using (var connection = new SQLiteConnection(SqlConnect.connectionString))
             {
-                DateTimeOffset LastRecord = DateTimeOffset.FromUnixTimeSeconds(0);
-                try
+                var record = connection.QueryFirstOrDefault<DateTimeOffset>($"SELECT Time FROM networkmetrics WHERE agentid={agentId} ORDER BY id DESC LIMIT 1");
+                if (record.Year == 1)
+                    lastRecord = DateTimeOffset.UnixEpoch;
+                else
                 {
-                    LastRecord = connection.QueryFirst<DateTimeOffset>($"SELECT Time FROM networkmetrics WHERE agentid={AgentId} ORDER BY id DESC LIMIT 1");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
+                    lastRecord = record;
                 }
 
-                LastRecord = LastRecord.ToLocalTime();
-                return LastRecord;
+                return lastRecord;
             }
         }
     }

@@ -1,9 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using AutoMapper;
+using MetricsManager.DAL.DTO;
 using MetricsManager.DAL.Interfaces;
+using MetricsManager.DAL.Models;
 using MetricsManager.DAL.Repositories;
 using MetricsManager.Requests;
+using MetricsManager.Responses;
 
 namespace MetricsManager.Controllers
 {
@@ -12,15 +17,15 @@ namespace MetricsManager.Controllers
     public class CpuMetricsController : ControllerBase
     {
         private readonly ILogger<CpuMetricsController> _logger;
-        private readonly IMetricsAgentClient _metricsAgentClient;
-        private readonly IAgentsRepository _repositoryAgent;
+        private readonly ICpuMetricsRepository _repository;
+        private readonly IMapper _mapper;
 
-        public CpuMetricsController(ILogger<CpuMetricsController> logger, IMetricsAgentClient metricsAgentClient, IAgentsRepository repositoryAgent)
+        public CpuMetricsController(ILogger<CpuMetricsController> logger, ICpuMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в CpuMetricsController");
-            _metricsAgentClient = metricsAgentClient;
-            _repositoryAgent = repositoryAgent;
+            _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet("agentId/{agentid}/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
@@ -35,17 +40,22 @@ namespace MetricsManager.Controllers
         {
             _logger.LogInformation($"Запрос метрики CPU с агента {agentId} с {fromTime} по {toTime}");
 
-            string agentAddress = _repositoryAgent.GetAddressForId(Convert.ToInt32(agentId));
+            DateTimeOffset timeFrom = fromTime.UtcDateTime;
+            DateTimeOffset timeto = toTime.UtcDateTime;
 
-            var metrics = _metricsAgentClient.GetCpuMetrics(new GetAllCpuMetricsApiRequest
+            var metrics = _repository.GetByDatePeriod(agentId, timeFrom, timeto);
+
+            var response = new AllCpuMetricsResponse()
             {
-                FromTime = fromTime.UtcDateTime,
-                ToTime = toTime.UtcDateTime,
-                ClientBaseAddress = agentAddress
-            });
+                Metrics = new List<CpuMetric>()
+            };
 
-
-            return Ok(metrics);
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add((CpuMetric) _mapper.Map<CpuMetric>(metric));
+            }
+            
+            return Ok(response);
         }
 
     }

@@ -22,9 +22,9 @@ namespace MetricManagerTest
         {
             _mock = new Mock<IDotNetMetricsRepository>();
             var logger = new Mock<ILogger<DotNetMetricsController>>();
-            var agentClient = new Mock<IMetricsAgentClient>();
-            var agentRepository = new Mock<IAgentsRepository>();
-            _controller = new DotNetMetricsController(logger.Object, agentClient.Object, agentRepository.Object);
+            var dotNetRepository = new Mock<IDotNetMetricsRepository>();
+            var mapper = new Mock<IMapper>();
+            _controller = new DotNetMetricsController(logger.Object, dotNetRepository.Object, mapper.Object);
         }
 
 

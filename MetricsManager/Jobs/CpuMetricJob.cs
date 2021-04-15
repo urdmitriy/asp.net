@@ -36,7 +36,8 @@ namespace MetricsManager.Jobs
                 string agentAddress = _repositoryAgent.GetAddressForId(agent.AgentId);
 
                 var fromTime = _repositoryCpu.GetDateTimeOfLastRecord(agent.AgentId);
-                var toTime = DateTimeOffset.Now;
+                var toTime = DateTimeOffset.UtcNow;
+
 
                 var metrics = _metricsAgentClient.GetCpuMetrics(new GetAllCpuMetricsApiRequest
                 {
@@ -45,10 +46,14 @@ namespace MetricsManager.Jobs
                     ClientBaseAddress = agentAddress
                 });
 
-                foreach (var metricFromAgent in metrics.Metrics)
+                if (metrics != null)
                 {
-                    _repositoryCpu.Create(agent.AgentId, metricFromAgent);
+                    foreach (var metricFromAgent in metrics.Metrics)
+                    {
+                        _repositoryCpu.Create(agent.AgentId, metricFromAgent);
+                    }
                 }
+                
             }
             return Task.CompletedTask;
         }

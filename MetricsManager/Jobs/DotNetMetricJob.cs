@@ -36,7 +36,7 @@ namespace MetricsManager.Jobs
                 string agentAddress = _repositoryAgent.GetAddressForId(agent.AgentId);
 
                 var fromTime = _repositoryDotNet.GetDateTimeOfLastRecord(agent.AgentId);
-                var toTime = DateTimeOffset.Now;
+                var toTime = DateTimeOffset.UtcNow;
 
                 var metrics = _metricsAgentClient.GetDotNetMetrics(new GetAllDotNetMetricsApiRequest()
                 {
@@ -45,10 +45,14 @@ namespace MetricsManager.Jobs
                     ClientBaseAddress = agentAddress
                 });
 
-                foreach (var metricFromAgent in metrics.Metrics)
+                if (metrics != null)
                 {
-                    _repositoryDotNet.Create(agent.AgentId, metricFromAgent);
+                    foreach (var metricFromAgent in metrics.Metrics)
+                    {
+                        _repositoryDotNet.Create(agent.AgentId, metricFromAgent);
+                    }
                 }
+
             }
             return Task.CompletedTask;
         }

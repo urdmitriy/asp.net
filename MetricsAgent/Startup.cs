@@ -19,6 +19,7 @@ using MetricsAgent.Jobs;
 using FluentMigrator;
 using FluentMigrator.Runner;
 using MetricsAgent.DAL.Repositories;
+using Microsoft.OpenApi.Models;
 
 namespace MetricsAgent
 {
@@ -93,11 +94,44 @@ namespace MetricsAgent
 
             services.AddHostedService<QuartzHostedService>();
 
+            services.AddSwaggerGen();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "API сервиса агента сбора метрик",
+                    Description = "Тут можно поиграть с api нашего сервиса",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Kadyrov",
+                        Email = string.Empty,
+                        Url = new Uri("https://kremlin.ru"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "можно указать под какой лицензией все опубликовано",
+                        Url = new Uri("https://example.com/license"),
+                    }
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMigrationRunner migrationRunner)
         {
+            // Включение middleware в пайплайн для обработки Swagger запросов.
+            app.UseSwagger();
+            // включение middleware для генерации swagger-ui 
+            // указываем Swagger JSON эндпоинт (куда обращаться за сгенерированной спецификацией
+            // по которой будет построен UI).
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API сервиса агента сбора метрик");
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
