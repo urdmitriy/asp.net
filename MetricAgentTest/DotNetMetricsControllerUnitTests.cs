@@ -1,33 +1,35 @@
-using MetricsAgent;
+using AutoMapper;
 using MetricsAgent.Controllers;
+using MetricsAgent.DAL.Models;
+using MetricsAgent.DAL.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
 using Xunit;
 
-namespace MetricsAgentTests
+namespace MetricAgentTest
 {
-    public class DotNetMetricsControllerUnitTests
+    public class DotNetControllerUnitTests
     {
         private DotNetMetricsController _controller;
-        private Mock<IDotNetMetricsRepository> _mock;
-        private Mock<ILogger<DotNetMetricsController>> _logger;
+        private readonly Mock<IDotNetMetricsRepository> _mock;
 
-        public DotNetMetricsControllerUnitTests()
+        public DotNetControllerUnitTests()
         {
             _mock = new Mock<IDotNetMetricsRepository>();
-            _logger = new Mock<ILogger<DotNetMetricsController>>();
-            _controller = new DotNetMetricsController(_logger.Object, _mock.Object);
+            var logger = new Mock<ILogger<DotNetMetricsController>>();
+            var mapper = new Mock<IMapper>();
+            _controller = new DotNetMetricsController(logger.Object, _mock.Object, mapper.Object);
         }
 
+
         [Fact]
-        public void Create_ShouldCall_Create_From_Repository()
+        public void GetMetricsFromAgent_ReturnsOk()
         {
             _mock.Setup(repository =>
-            repository.Create(It.IsAny<DotNetMetric>())).Verifiable();
+                repository.Create(It.IsAny<DotNetMetric>())).Verifiable();
 
             _mock.Verify(repository => repository.Create(It.IsAny<DotNetMetric>()),
-            Times.AtMostOnce());
+                Times.AtMostOnce());
         }
     }
 }

@@ -1,23 +1,25 @@
+using AutoMapper;
 using MetricsAgent;
 using MetricsAgent.Controllers;
+using MetricsAgent.DAL.Models;
+using MetricsAgent.DAL.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
 using Xunit;
 
-namespace MetricsAgentTests
+namespace MetricAgentTest
 {
     public class RamMetricsControllerUnitTests
     {
         private RamMetricsController _controller;
-        private Mock<IRamMetricsRepository> _mock;
-        private Mock<ILogger<RamMetricsController>> _logger;
+        private readonly Mock<IRamMetricsRepository> _mock;
 
         public RamMetricsControllerUnitTests()
         {
             _mock = new Mock<IRamMetricsRepository>();
-            _logger = new Mock<ILogger<RamMetricsController>>();
-            _controller = new RamMetricsController(_logger.Object, _mock.Object);
+            var logger = new Mock<ILogger<RamMetricsController>>();
+            var mapper = new Mock<IMapper>();
+            _controller = new RamMetricsController(logger.Object, _mock.Object, mapper.Object);
         }
 
         [Fact]

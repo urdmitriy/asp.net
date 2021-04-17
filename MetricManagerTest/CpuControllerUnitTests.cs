@@ -1,49 +1,52 @@
-using MetricsManager;
+using AutoMapper;
 using MetricsManager.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using System;
+using MetricsManager.DAL.Interfaces;
+using MetricsManager.DAL.Models;
+using MetricsManager.DAL.Repositories;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
 
 namespace MetricManagerTest
 {
     public class CpuControllerUnitTests
     {
+
         private CpuMetricsController _controller;
+        private readonly Mock<ICpuMetricsRepository> _mock;
 
         public CpuControllerUnitTests()
         {
-            _controller = new CpuMetricsController();
+            _mock = new Mock<ICpuMetricsRepository>();
+            var logger = new Mock<ILogger<CpuMetricsController>>();
+            var cpuRepository = new Mock<ICpuMetricsRepository>();
+            var mapper = new Mock<IMapper>();
+            _controller = new CpuMetricsController(logger.Object, cpuRepository.Object, mapper.Object);
         }
 
 
         [Fact]
         public void GetMetricsFromAgent_ReturnsOk()
         {
-            //Arrange
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
+            int AgentId = 1;
 
-            //Act
-            var result = _controller.GetMetricsFromAgent(fromTime, toTime);
+            _mock.Setup(repository =>
+                repository.Create(AgentId, It.IsAny<CpuMetric>())).Verifiable();
 
-            // Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
+            _mock.Verify(repository => repository.Create(AgentId,It.IsAny<CpuMetric>()),
+                Times.AtMostOnce());
 
         }
         [Fact]
         public void GetMetricsFromAgentByPercentille_ReturnsOk()
         {
-            //Arrange
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
-            Percentile percentile = Percentile.P99;
+            int AgentId = 1;
 
-            //Act
-            var result = _controller.GetMetricsFromAgentByPercentille(fromTime, toTime, percentile);
+            _mock.Setup(repository =>
+                repository.Create(AgentId, It.IsAny<CpuMetric>())).Verifiable();
 
-            // Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
-
+            _mock.Verify(repository => repository.Create(AgentId, It.IsAny<CpuMetric>()),
+                Times.AtMostOnce());
         }
     }
 }

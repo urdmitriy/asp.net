@@ -1,23 +1,25 @@
+using AutoMapper;
 using MetricsAgent;
 using MetricsAgent.Controllers;
+using MetricsAgent.DAL.Models;
+using MetricsAgent.DAL.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
 using Xunit;
 
-namespace MetricsAgentTests
+namespace MetricAgentTest
 {
     public class NetworkMetricsControllerUnitTests
     {
         private NetworkMetricsController _controller;
-        private Mock<INetworkMetricsRepository> _mock;
-        private Mock<ILogger<NetworkMetricsController>> _logger;
+        private readonly Mock<INetworkMetricsRepository> _mock;
 
         public NetworkMetricsControllerUnitTests()
         {
             _mock = new Mock<INetworkMetricsRepository>();
-            _logger = new Mock<ILogger<NetworkMetricsController>>();
-            _controller = new NetworkMetricsController(_logger.Object, _mock.Object);
+            var logger = new Mock<ILogger<NetworkMetricsController>>();
+            var mapper = new Mock<IMapper>();
+            _controller = new NetworkMetricsController(logger.Object, _mock.Object, mapper.Object);
         }
 
         [Fact]

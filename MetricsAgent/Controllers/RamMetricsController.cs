@@ -1,10 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MetricsAgent.DAL.DTO;
+using MetricsAgent.DAL.Repositories;
+using MetricsAgent.Responses;
+using System.Text.Json;
 
 namespace MetricsAgent.Controllers
 {
@@ -13,20 +18,26 @@ namespace MetricsAgent.Controllers
     public class RamMetricsController : ControllerBase
     {
         private readonly ILogger<RamMetricsController> _logger;
-        private IRamMetricsRepository _repository;
-        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository)
+        private readonly IRamMetricsRepository _repository;
+        private readonly IMapper _mapper;
+        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в RamMetricsController");
             _repository = repository;
+            _mapper = mapper;
         }
 
-        [HttpGet("available")]
-        public IActionResult GetMetricsFromAgent()
+        [HttpGet("available/from/{fromTime}/to/{toTime}")]
+        public IActionResult GetMetricsFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
             _logger.LogInformation($"Запрос метрики Memory");
 
-            var metrics = _repository.GetAll();
+
+            DateTimeOffset timeFrom = fromTime.UtcDateTime;
+            DateTimeOffset timeto = toTime.UtcDateTime;
+
+            var metrics = _repository.GetByDatePeriod(timeFrom, timeto);
             var response = new AllRamMetricsResponse()
             {
                 Metrics = new List<RamMetricsDto>()
@@ -34,9 +45,8 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new RamMetricsDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(_mapper.Map<RamMetricsDto>(metric));
             }
-
             return Ok(response);
         }
     }

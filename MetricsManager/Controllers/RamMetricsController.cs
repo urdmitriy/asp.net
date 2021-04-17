@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
+using MetricsManager.DAL.Interfaces;
+using MetricsManager.DAL.Models;
+using MetricsManager.DAL.Repositories;
+using MetricsManager.Requests;
+using MetricsManager.Responses;
 
 namespace MetricsManager.Controllers
 {
@@ -13,30 +16,38 @@ namespace MetricsManager.Controllers
     public class RamMetricsController : ControllerBase
     {
         private readonly ILogger<RamMetricsController> _logger;
-        public RamMetricsController(ILogger<RamMetricsController> logger)
+        private readonly IRamMetricsRepository _repository;
+        private readonly IMapper _mapper;
+
+        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в RamMetricsController");
+            _repository = repository;
+            _mapper = mapper;
         }
-        [HttpGet("agentId/{agentid}/available")]
-        public IActionResult GetMetricsFromAgent([FromRoute] int agentId)
+
+        [HttpGet("agentId/{agentid}/available/from/{fromTime}/to/{toTime}")]
+        public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
             _logger.LogInformation($"Запрос метрики Memory");
-            return Ok("");
+            DateTimeOffset timeFrom = fromTime.UtcDateTime;
+            DateTimeOffset timeto = toTime.UtcDateTime;
+
+            var metrics = _repository.GetByDatePeriod(agentId, timeFrom, timeto);
+
+            var response = new AllRamMetricsResponse()
+            {
+                Metrics = new List<RamMetrics>()
+            };
+
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add((RamMetrics)_mapper.Map<RamMetrics>(metric));
+            }
+
+            return Ok(response);
         }
 
-        [HttpGet("agentId/{agentid}/cluster/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAllCluster([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
-        {
-            _logger.LogInformation($"Запрос метрики Memory кластеров");
-            return Ok();
-        }
-
-        [HttpGet("agentId/{agentid}/cluster/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
-        public IActionResult GetMetricsByPercentileFromAllCluster([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
-        {
-            _logger.LogInformation($"Запрос метрики Memory кластеров, перцентиле {percentile}");
-            return Ok();
-        }
     }
 }

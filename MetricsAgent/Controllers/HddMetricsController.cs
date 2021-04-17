@@ -1,10 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
+using MetricsAgent.DAL.DTO;
+using MetricsAgent.DAL.Repositories;
+using MetricsAgent.Responses;
 
 namespace MetricsAgent.Controllers
 {
@@ -13,20 +18,25 @@ namespace MetricsAgent.Controllers
     public class HddMetricsController : ControllerBase
     {
         private readonly ILogger<HddMetricsController> _logger;
-        private IHddMetricsRepository _repository;
-        public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository repository)
+        private readonly IHddMetricsRepository _repository;
+        private readonly IMapper _mapper;
+        public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в HddMetricsController");
             _repository = repository;
+            _mapper = mapper;
         }
 
-        [HttpGet("left")]
-        public IActionResult GetMetricsFromAgent()
+        [HttpGet("left/from/{fromTime}/to/{toTime}")]
+        public IActionResult GetMetricsFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
             _logger.LogInformation($"Запрос метрики HDD");
 
-            var metrics = _repository.GetAll();
+            DateTimeOffset timeFrom = fromTime.UtcDateTime;
+            DateTimeOffset timeto = toTime.UtcDateTime;
+
+            var metrics = _repository.GetByDatePeriod(timeFrom, timeto);
             var response = new AllHddMetricsResponse()
             {
                 Metrics = new List<HddMetricDto>()
@@ -34,7 +44,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new HddMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(_mapper.Map<HddMetricDto>(metric));
             }
 
             return Ok(response);
